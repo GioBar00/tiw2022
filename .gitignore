@@ -1,52 +1,38 @@
-# Project Ignores Files 
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-# Maven
-.mvn
-*.classpath
-*.project
-*.settings
-/bin/*
-/target/*
-
-#gradle
-.gradle
-/build
-
-# Compiled class file
-*.class
-
-# Package Files
-*.jar
-*.war
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-
-# JetBrains IDEs
+### IntelliJ IDEA ###
 .idea/
+*.iws
 *.iml
+*.ipr
 
-# Eclipse
-.project
+### Eclipse ###
+.apt_generated
 .classpath
+.factorypath
+.project
 .settings
+.springBeans
+.sts4-cache
 
-# Netbeans
-nbactions*.xml
-nb-configuration*.xml
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
 
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
 
 # Folder config file
 Desktop.ini
-
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
-
-#Extra Folders
-/unused
-**/.DS_Store
-
-#spring
-.springBeans
