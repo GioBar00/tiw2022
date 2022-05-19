@@ -6,9 +6,7 @@ import javax.servlet.annotation.*;
 
 @WebServlet(name = "helloServlet", value = "/hello-servlet")
 public class HelloServlet extends HttpServlet {
-    /**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	private String message;
 
