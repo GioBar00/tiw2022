@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Documents</title>
+</head>
+<body>
+<ul>
+    <li th:each = "document : ${documents}"   >
+        <p th:text = "folder.name">
+        <a th:href = "@{/document?prodId=${subFolder.id}}"> Accedi </a>
+        <a th:href="@{/document/move?documentId=${document.id}}"> Sposta </a>
+        </p>
+    </li>
+</ul>
+
+<a href = "home.html" >Go to last page</a>
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+CREATE TABLE `utente` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(45) NOT NULL,
+  `password` varchar(45) NOT NULL,
+  `email` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+)
+
+CREATE TABLE `cartella` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nome` varchar(45) NOT NULL,
+  `proprietario` int NOT NULL,
+  `data` date NOT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `proprietario` FOREIGN KEY (`id`) REFERENCES `utente` (`id`)
+)
+
+CREATE TABLE `sottocartella` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `idProprietario` int NOT NULL,
+  `idCartella` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `cartella_idx` (`idCartella`),
+  KEY `proprietario_idx` (`idProprietario`),
+  CONSTRAINT `idCartella` FOREIGN KEY (`idCartella`) REFERENCES `cartella` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idProprietario` FOREIGN KEY (`idProprietario`) REFERENCES `utente` (`id`) ON UPDATE CASCADE
+)
+
+CREATE TABLE `documento` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nome` varchar(45) NOT NULL,
+  `data` date NOT NULL,
+  `sommario` varchar(200) NOT NULL,
+  `tipo` varchar(45) NOT NULL,
+  `idSottoCartella` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idSottoCartella_idx` (`idSottoCartella`),
+  CONSTRAINT `idSottoCartella` FOREIGN KEY (`idSottoCartella`) REFERENCES `sottocartella` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) 

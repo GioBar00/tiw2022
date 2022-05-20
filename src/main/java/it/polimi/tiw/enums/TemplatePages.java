@@ -8,7 +8,9 @@ public enum TemplatePages {
      * The login template.
      */
     LOGIN("login"),
-    REGISTER("register");
+    REGISTER("register"),
+
+    HOME("home");
 
     private final String value;
 

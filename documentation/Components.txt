@@ -1,0 +1,52 @@
+Model objects Bens (Beans)
+User
+Folder
+SubFolder
+Document
+
+Data Access Object(Classes)
+UserDAO
+	-checkCredentials (username, password)
+	-addUser (username, password, email)
+	-doesUserExists (username)
+FolderDAO
+	-createFolder (username, folderName)
+	-doesFolderExists (username, folderName)
+	-getFolders (username)
+SubFolderDAO
+	-checkOwner(username, subFolderId)
+	-createSubFolder (username, folderId,subFolderName)
+	-doesSubFolderExists (folderId, subFolderName)
+	-getDocuments (username, subFolderId)
+DocumentDAO
+	-checkOwner(username, documentId)
+	-getDocument (documentId)
+	-getSubFolder (documentId)
+	-moveDocument (username, subFolderId, documentId)
+	-doesDocumentExists (subFolderId, documentName)
+
+
+Controllers:
+Login
+Register
+Logout
+HomePage
+MoveDocument
+CreateFolder
+CreateSubFolder
+CreateDocument
+Documents
+DocumentDetails
+GotoLastPage
+
+Views
+Login
+HomePage
+Documents
+Document
+ContentManagement
+
+Filters:
+CheckLoggedIn
+CheckNotLoggedIn (per la pagine di register che se è già loggato lo manda alla home)
+CheckLastPage (previousPage, currentPage; if homePage -> reset)

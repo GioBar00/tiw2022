@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <h2 th:text = "document.name"></h2>
+    <h3 th:text ="'Owner :' document.owner"></h3>
+    <h3 th:text ="'Format :' document.format"></h3>
+    <h3>Summary</h3>
+        <p th:text = "document.summary"></p>
+    <h3 th:text ="'Date :' document.date"></h3>
+    <a th:text="'Go to last page'" th:href = "${#session.lastPage}"></a>
+</body>
+</html>
+
