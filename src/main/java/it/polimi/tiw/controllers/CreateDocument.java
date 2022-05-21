@@ -102,7 +102,7 @@ public class CreateDocument extends HttpServlet {
                         response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while processing the request");
                     }
                 }
-        
+
         final WebContext webContext = new WebContext(request, response, getServletContext(), request.getLocale());
         webContext.setVariable("error", true);
         templateEngine.process(request.getContextPath(), webContext, response.getWriter());
