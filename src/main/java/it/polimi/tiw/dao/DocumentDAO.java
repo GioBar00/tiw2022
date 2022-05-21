@@ -14,58 +14,42 @@ public class DocumentDAO {
 
     private final Connection connection;
 
-    public DocumentDAO(Connection connection){
+    public DocumentDAO(Connection connection) {
         this.connection = connection;
     }
 
-    public boolean doesDocumentExists(){
-         return false;
+    public boolean doesDocumentExists() {
+        return false;
     }
 
-    public boolean CheckOwner(String username,int documentId) throws SQLException {
-        String ownerId;
-        String userId;
-        String query = "SELECT idProprietario FROM documento WHERE id = ?";
-        try(PreparedStatement statement = connection.prepareStatement(query)){
+    public boolean checkOwner(int userId, int documentId) throws SQLException {
+        String query = "SELECT user_iduser FROM (document d INNER JOIN subfolder s ON d.subforlder_idsubforlder = s.idsubforlder) INNER JOIN folder f ON s.folder_idfolder = f.idfolder WHERE iddocument = ? AND user_iduser = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, String.valueOf(documentId));
+            statement.setString(2, String.valueOf(userId));
             ResultSet resultSet = statement.executeQuery();
 
-            if(!resultSet.isBeforeFirst())
-                return false;
-            ownerId = resultSet.getString("idProprieratio");
+            return resultSet.next();
 
         }
-        query = "SELECT id FROM uset WHERE username = ?";
-        try(PreparedStatement statement = connection.prepareStatement(query)){
-            statement.setString(1, String.valueOf(documentId));
-            ResultSet resultSet = statement.executeQuery();
-
-            if(!resultSet.isBeforeFirst())
-                return false;
-            resultSet.next();
-            userId = resultSet.getString("id");
-        }
-
-        return userId.equals(ownerId);
     }
 
-    public Document getDocument (String documentId) throws SQLException {
-        String query = "SELECT * FROM document WHERE id = ?";
-        try(PreparedStatement statement = connection.prepareStatement(query)){
+    public Document getDocument(String documentId) throws SQLException {
+        String query = "SELECT * FROM document WHERE iddocument = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, documentId);
             ResultSet resultSet = statement.executeQuery();
 
-            if(!resultSet.isBeforeFirst())
+            if (!resultSet.isBeforeFirst())
                 return null;
             resultSet.next();
-            return new Document(Integer.parseInt(resultSet.getString("id")),
+            return new Document(resultSet.getInt("iddocument"),
                     resultSet.getString("name"),
                     resultSet.getString("format"),
                     resultSet.getString("summary"),
                     (Date) new SimpleDateFormat("dd/MM/yyyy").parse(resultSet.getString("creationDate")),
-                    Integer.parseInt(resultSet.getString("ownerId")),
-                    Integer.parseInt(resultSet.getString("subFolderId"))
-                    );
+                    resultSet.getInt("subfolder_idsubfolder")
+            );
 
 
         } catch (ParseException e) {
@@ -73,7 +57,7 @@ public class DocumentDAO {
         }
     }
 
-    public SubFolder getSubFolder(){
+    public SubFolder getSubFolder() {
         return null;
     }
 

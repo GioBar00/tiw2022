@@ -1,5 +1,6 @@
 package it.polimi.tiw.controllers;
 
+import it.polimi.tiw.enums.RegisterError;
 import it.polimi.tiw.utils.ConnectionHandler;
 import it.polimi.tiw.utils.ConstrainValidator;
 import it.polimi.tiw.dao.UserDAO;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.Serial;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -23,6 +25,7 @@ import java.sql.SQLException;
  */
 @WebServlet(name = "Register", value = "/register")
 public class Register extends HttpServlet {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -61,8 +64,18 @@ public class Register extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         final WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
         if (req.getParameter("error") != null) {
-            //FIXME: check error with enum otherwise bad request
-            webContext.setVariable("error", true);
+            String errorCode = req.getParameter("error");
+            try {
+                RegisterError error = RegisterError.fromOrdinal(Integer.parseInt(errorCode));
+                if (error == null) {
+                    resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid error code");
+                    return;
+                }
+                webContext.setVariable("error", error);
+            } catch (NumberFormatException e) {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid error code");
+                return;
+            }
         }
 
         templateEngine.process(String.valueOf(TemplatePages.REGISTER), webContext, resp.getWriter());
@@ -103,27 +116,27 @@ public class Register extends HttpServlet {
 
             RegisterError error;
 
-            if (!password.equals(confirmPassword))
-                error = RegisterError.PASSWORD_MISMATCH;
-            else if (userDAO.doesEmailExist(email))
-                error = RegisterError.EMAIL_ALREADY_USED;
-            else if (userDAO.doesUsernameExist(username))
-                error = RegisterError.USERNAME_NOT_AVAILABLE;
-            else if (!ConstrainValidator.isValidSurname(surname))
-                error = RegisterError.INVALID_SURNAME;
-            else if (!ConstrainValidator.isValidName(name))
-                error = RegisterError.INVALID_NAME;
-            else if (!ConstrainValidator.isValidPassword(password))
-                error = RegisterError.INVALID_PASSWORD;
+            if (!ConstrainValidator.isValidUsername(username))
+                error = RegisterError.INVALID_USERNAME;
             else if (!ConstrainValidator.isValidEmail(email))
                 error = RegisterError.INVALID_EMAIL;
-            else if (!ConstrainValidator.isValidUsername(username))
-                error = RegisterError.INVALID_USERNAME;
+            else if (!ConstrainValidator.isValidPassword(password))
+                error = RegisterError.INVALID_PASSWORD;
+            else if (!ConstrainValidator.isValidName(name))
+                error = RegisterError.INVALID_NAME;
+            else if (!ConstrainValidator.isValidSurname(surname))
+                error = RegisterError.INVALID_SURNAME;
+            else if (userDAO.doesUsernameExist(username))
+                error = RegisterError.USERNAME_NOT_AVAILABLE;
+            else if (userDAO.doesEmailExist(email))
+                error = RegisterError.EMAIL_ALREADY_USED;
+            else if (!password.equals(confirmPassword))
+                error = RegisterError.PASSWORD_MISMATCH;
             else
                 error = null;
 
             if (error != null) {
-                resp.sendRedirect(req.getContextPath() + "/register?error=" + error.getMessage());
+                resp.sendRedirect(req.getContextPath() + "/register?error=" + error.ordinal());
                 return;
             }
 
@@ -145,31 +158,6 @@ public class Register extends HttpServlet {
         try {
             ConnectionHandler.closeConnection(connection);
         } catch (SQLException ignored) {
-        }
-    }
-
-    /**
-     * Enum of the errors of the register page.
-     */
-    private enum RegisterError {
-        //FIXME: put int instead of message
-        INVALID_USERNAME("Invalid username."),
-        INVALID_EMAIL("Invalid email."),
-        INVALID_PASSWORD("Invalid password."),
-        INVALID_NAME("Invalid name."),
-        INVALID_SURNAME("Invalid surname."),
-        USERNAME_NOT_AVAILABLE("Username not available."),
-        EMAIL_ALREADY_USED("Email already used."),
-        PASSWORD_MISMATCH("Passwords do not match.");
-
-        private final String message;
-
-        RegisterError(String message) {
-            this.message = message;
-        }
-
-        public String getMessage() {
-            return message;
         }
     }
 }

@@ -9,8 +9,7 @@ import java.sql.Date;
  * @param format the format of the document.
  * @param summary the summary of the document.
  * @param creationDate the creation date of the document.
- * @param ownerId the id of the owner of the document.
  * @param subFolderId the id of the subfolder of the document.
  */
-public record Document(int id, String name, String format, String summary, Date creationDate, int ownerId, int subFolderId) {
+public record Document(int id, String name, String format, String summary, Date creationDate, int subFolderId) {
 }
