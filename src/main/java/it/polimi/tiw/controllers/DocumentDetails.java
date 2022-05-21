@@ -48,22 +48,19 @@ public class DocumentDetails extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String identifier = request.getParameter("id");
         try {
-            int id = Integer.parseInt(identifier);
+            int id = Integer.parseInt(request.getParameter("id"));
             DocumentDAO documentDAO = new DocumentDAO(this.connection);
             User user = (User) request.getSession().getAttribute("user");
-            if(documentDAO.checkOwner(user.id(),id)){
+            if (documentDAO.checkOwner(user.id(), id)) {
 
                 Document document = documentDAO.getDocument(id);
-                String path = "WEB-INF/home/documents/document";
 
                 ServletContext servletContext = getServletContext();
                 final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
                 ctx.setVariable("document", document);
-                templateEngine.process(path, ctx, response.getWriter());
-            }
-            else response.sendRedirect(String.valueOf(TemplatePages.HOME));
+                templateEngine.process(TemplatePages.DOCUMENT.getValue(), ctx, response.getWriter());
+            } else response.sendRedirect(getServletContext().getContextPath() + "/");
 
         } catch (NumberFormatException | NullPointerException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid document id");

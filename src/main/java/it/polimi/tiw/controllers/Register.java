@@ -2,7 +2,6 @@ package it.polimi.tiw.controllers;
 
 import it.polimi.tiw.enums.RegisterError;
 import it.polimi.tiw.utils.ConnectionHandler;
-import it.polimi.tiw.utils.ConstrainValidator;
 import it.polimi.tiw.dao.UserDAO;
 import it.polimi.tiw.enums.TemplatePages;
 import it.polimi.tiw.utils.TemplateHandler;
@@ -78,7 +77,7 @@ public class Register extends HttpServlet {
             }
         }
 
-        templateEngine.process(String.valueOf(TemplatePages.REGISTER), webContext, resp.getWriter());
+        templateEngine.process(TemplatePages.REGISTER.getValue(), webContext, resp.getWriter());
     }
 
     /**
@@ -116,15 +115,15 @@ public class Register extends HttpServlet {
 
             RegisterError error;
 
-            if (!ConstrainValidator.isValidUsername(username))
+            if (!UserDAO.isValidUsername(username))
                 error = RegisterError.INVALID_USERNAME;
-            else if (!ConstrainValidator.isValidEmail(email))
+            else if (!UserDAO.isValidEmail(email))
                 error = RegisterError.INVALID_EMAIL;
-            else if (!ConstrainValidator.isValidPassword(password))
+            else if (!UserDAO.isValidPassword(password))
                 error = RegisterError.INVALID_PASSWORD;
-            else if (!ConstrainValidator.isValidName(name))
+            else if (!UserDAO.isValidName(name))
                 error = RegisterError.INVALID_NAME;
-            else if (!ConstrainValidator.isValidSurname(surname))
+            else if (!UserDAO.isValidSurname(surname))
                 error = RegisterError.INVALID_SURNAME;
             else if (userDAO.doesUsernameExist(username))
                 error = RegisterError.USERNAME_NOT_AVAILABLE;

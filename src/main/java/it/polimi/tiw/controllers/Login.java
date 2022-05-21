@@ -1,7 +1,6 @@
 package it.polimi.tiw.controllers;
 
 import it.polimi.tiw.utils.ConnectionHandler;
-import it.polimi.tiw.utils.ConstrainValidator;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.UserDAO;
 import it.polimi.tiw.enums.TemplatePages;
@@ -67,7 +66,7 @@ public class Login extends HttpServlet {
             webContext.setVariable("error", true);
         else if (req.getParameter("success") != null)
             webContext.setVariable("success", true);
-        templateEngine.process(String.valueOf(TemplatePages.LOGIN), webContext, resp.getWriter());
+        templateEngine.process(TemplatePages.LOGIN.getValue(), webContext, resp.getWriter());
     }
 
     /**
@@ -94,9 +93,9 @@ public class Login extends HttpServlet {
         UserDAO userDAO = new UserDAO(connection);
         User user = null;
         try {
-            if (ConstrainValidator.isValidEmail(identifier) && userDAO.doesEmailExist(identifier)) {
+            if (UserDAO.isValidEmail(identifier) && userDAO.doesEmailExist(identifier)) {
                 user = userDAO.checkEmailCredentials(identifier, password);
-            } else if (ConstrainValidator.isValidUsername(identifier) && userDAO.doesUsernameExist(identifier)) {
+            } else if (UserDAO.isValidUsername(identifier) && userDAO.doesUsernameExist(identifier)) {
                 user = userDAO.checkUsernameCredentials(identifier, password);
             }
         } catch (SQLException e) {

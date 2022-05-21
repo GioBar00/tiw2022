@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Date;
 import java.util.*;
 
 /**
@@ -94,6 +95,23 @@ public class FolderDAO {
                         resultSet.getInt("s.folder_idfolder")));
             }
             return folders;
+        }
+    }
+
+    /**
+     * This method creates a new {@link Folder}.
+     * @param name the name of the folder.
+     * @param ownerId the id of the owner.
+     * @return if the folder was created.
+     * @throws SQLException if an error occurs during the query.
+     */
+    public boolean createFolder(String name, int ownerId) throws SQLException {
+        String query = "INSERT INTO folder (name, creationDate, user_iduser) VALUES (?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, name);
+            statement.setDate(2, new Date(new java.util.Date().getTime()));
+            statement.setInt(3, ownerId);
+            return statement.executeUpdate() > 0;
         }
     }
 }

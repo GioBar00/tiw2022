@@ -20,7 +20,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-@WebServlet(name = "Documents", value ="/documents")
+@WebServlet(name = "Documents", value = "/documents")
 public class Documents extends HttpServlet {
 
     /**
@@ -58,32 +58,27 @@ public class Documents extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
         try {
             int subFolderId = Integer.parseInt(request.getParameter("subFolderId"));
-            ArrayList <Document> documents;
+            ArrayList<Document> documents;
             SubFolderDAO subFolderDAO = new SubFolderDAO(this.connection);
             User user = (User) request.getSession().getAttribute("user");
 
-            if(subFolderDAO.checkOwner(user.id(), subFolderId)){
+            if (subFolderDAO.checkOwner(user.id(), subFolderId)) {
 
                 documents = subFolderDAO.getDocuments(subFolderId);
 
-                String path = "WEB-INF/home/documents";
                 ServletContext servletContext = getServletContext();
                 final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
                 ctx.setVariable("documents", documents);
-                templateEngine.process(path, ctx, response.getWriter());
-            }
-            else response.sendRedirect(String.valueOf(TemplatePages.HOME));
+                templateEngine.process(TemplatePages.DOCUMENTS.getValue(), ctx, response.getWriter());
+            } else response.sendRedirect(getServletContext().getContextPath() + "/");
 
         } catch (NullPointerException | NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Parameters");
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while processing the request");
         }
-
     }
 
     /**
@@ -91,11 +86,9 @@ public class Documents extends HttpServlet {
      */
     @Override
     public void destroy() {
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException ignored) {
-            }
+        try {
+            ConnectionHandler.closeConnection(connection);
+        } catch (SQLException ignored) {
         }
     }
 }

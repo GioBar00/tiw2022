@@ -9,6 +9,8 @@ public enum TemplatePages {
      */
     LOGIN("login"),
     REGISTER("register"),
+    DOCUMENT("document"),
+    DOCUMENTS("documents"),
 
     HOME("home"),
 

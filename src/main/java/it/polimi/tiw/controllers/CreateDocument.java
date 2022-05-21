@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-@WebServlet(name = "CreateDocument", value ="/documents")
+@WebServlet(name = "CreateDocument", value = "/document/create")
 public class CreateDocument extends HttpServlet {
     /**
      * {@link Connection} to the database
@@ -57,24 +57,19 @@ public class CreateDocument extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int subFolderId;
         try {
-            subFolderId = Integer.parseInt(request.getParameter("subFolderId"));
+            int subFolderId = Integer.parseInt(request.getParameter("subFolderId"));
 
             SubFolderDAO subFolderDAO = new SubFolderDAO(this.connection);
             User user = (User) request.getSession().getAttribute("user");
 
             if (subFolderDAO.checkOwner(user.id(), subFolderId)) {
-
                 request.getSession().setAttribute("subFolderId", subFolderId);
-                String path = "WEB-INF/home/contentManagement";
                 ServletContext servletContext = getServletContext();
                 final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
                 ctx.setVariable("userRequest", 2);
-                templateEngine.process(path, ctx, response.getWriter());
-            }
-
-            else response.sendRedirect(String.valueOf(TemplatePages.HOME));
+                templateEngine.process(TemplatePages.CONTENT_MANAGEMENT.getValue(), ctx, response.getWriter());
+            } else response.sendRedirect(getServletContext().getContextPath() + "/");
         } catch (NullPointerException | NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Parameters");
         } catch (SQLException e) {
@@ -88,21 +83,23 @@ public class CreateDocument extends HttpServlet {
         String format = request.getParameter("format");
         String summary = request.getParameter("summary");
 
-        if(name != null && name.length()>0 && name.length()<=50)
-            if( format != null && format.length()> 0 && format.length()<=10)
-                if(summary != null && summary.length()>0 && summary.length()<= 200){
+        //TODO: add isNameValid(String name) ecc methods to DocumentsDAO
+        //FIXME: do not set subFolderId to session, use the one in the request
+        if (name != null && name.length() > 0 && name.length() <= 50)
+            if (format != null && format.length() > 0 && format.length() <= 10)
+                if (summary != null && summary.length() > 0 && summary.length() <= 200) {
                     DocumentDAO documentDAO = new DocumentDAO(this.connection);
                     try {
-                        if(documentDAO.createDocument(name,format,summary, (Integer) request.getSession().getAttribute("subFolderId"))){
+                        if (documentDAO.createDocument(name, format, summary, (Integer) request.getSession().getAttribute("subFolderId"))) {
                             request.getSession().removeAttribute("subFolderId");
-                            response.sendRedirect(String.valueOf(TemplatePages.HOME));
+                            response.sendRedirect(getServletContext().getContextPath() + "/");
                             return;
                         }
                     } catch (SQLException e) {
                         response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while processing the request");
                     }
                 }
-
+        //FIXME: send error message, not template process
         final WebContext webContext = new WebContext(request, response, getServletContext(), request.getLocale());
         webContext.setVariable("error", true);
         templateEngine.process(request.getContextPath(), webContext, response.getWriter());
@@ -114,11 +111,9 @@ public class CreateDocument extends HttpServlet {
      */
     @Override
     public void destroy() {
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException ignored) {
-            }
+        try {
+            ConnectionHandler.closeConnection(connection);
+        } catch (SQLException ignored) {
         }
     }
 }
