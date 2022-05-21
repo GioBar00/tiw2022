@@ -7,8 +7,8 @@
 <body>
 <ul>
     <li th:each = "document : ${documents}"   >
-        <p th:text = "folder.name">
-        <a th:href = "@{/document?prodId=${subFolder.id}}"> Accedi </a>
+        <p th:text = "document.name">
+        <a th:href = "@{/document?documentId=${document.id}}"> Accedi </a>
         <a th:href="@{/document/move?documentId=${document.id}}"> Sposta </a>
         </p>
     </li>

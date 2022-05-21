@@ -33,7 +33,9 @@ CREATE TABLE `documento` (
   `sommario` varchar(200) NOT NULL,
   `tipo` varchar(45) NOT NULL,
   `idSottoCartella` int NOT NULL,
+  `idProprietario` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idSottoCartella_idx` (`idSottoCartella`),
-  CONSTRAINT `idSottoCartella` FOREIGN KEY (`idSottoCartella`) REFERENCES `sottocartella` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `idSottoCartella` FOREIGN KEY (`idSottoCartella`) REFERENCES `sottocartella` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idProprietario` FOREIGN KEY (`idProprietario`) REFERENCES `utente` (`id`) ON UPDATE CASCADE
 ) 

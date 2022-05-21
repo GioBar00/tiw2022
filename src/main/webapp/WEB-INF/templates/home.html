@@ -11,7 +11,7 @@
             <li th:each = "folder : ${folders}" th:text = "folder.name">
                 <ul>
                     <li th:each = "subFolder : ${folder.subFolder}">
-                        <a  th:text = "subFolder.name" th:href ="@{/documents?prodId=${subFolder.id}}"></a>
+                        <a  th:text = "subFolder.name" th:href ="@{/documents?subFolderId=${subFolder.id}}"></a>
                     </li>
                 </ul>
             </li>
