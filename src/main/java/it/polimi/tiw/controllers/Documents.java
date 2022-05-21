@@ -1,6 +1,9 @@
 package it.polimi.tiw.controllers;
 
 import it.polimi.tiw.beans.Document;
+import it.polimi.tiw.beans.User;
+import it.polimi.tiw.dao.SubFolderDAO;
+import it.polimi.tiw.enums.TemplatePages;
 import it.polimi.tiw.utils.ConnectionHandler;
 import it.polimi.tiw.utils.TemplateHandler;
 import org.thymeleaf.TemplateEngine;
@@ -55,28 +58,32 @@ public class Documents extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int subFolderId;
-        boolean invalidRequest = false;
-        try {
-            subFolderId = Integer.parseInt(request.getParameter("subFolderId"));
-        } catch (NullPointerException | NumberFormatException e) {
-            invalidRequest = true;
-        }
 
-        if (invalidRequest) {
+        try {
+            int subFolderId = Integer.parseInt(request.getParameter("subFolderId"));
+            ArrayList <Document> documents;
+            SubFolderDAO subFolderDAO = new SubFolderDAO(this.connection);
+            User user = (User) request.getSession().getAttribute("user");
+
+            if(subFolderDAO.checkOwner(user.id(), subFolderId)){
+
+                documents = subFolderDAO.getDocuments(subFolderId);
+
+                String path = "WEB-INF/home/documents";
+                ServletContext servletContext = getServletContext();
+                final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+                ctx.setVariable("documents", documents);
+                templateEngine.process(path, ctx, response.getWriter());
+            }
+            else response.sendRedirect(String.valueOf(TemplatePages.HOME));
+
+        } catch (NullPointerException | NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Parameters");
         }
+        catch (SQLException e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while processing the request");
+        }
 
-        ArrayList <Document> documents= new ArrayList<>();
-        //TODO
-        //check the validity of the document id with document dao if invalid redirect to the last page.
-        //getting the document with the dao
-
-        String path = "WEB-INF/Home/Documents";
-        ServletContext servletContext = getServletContext();
-        final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-        ctx.setVariable("documents", documents);
-        templateEngine.process(path, ctx, response.getWriter());
     }
 
     /**

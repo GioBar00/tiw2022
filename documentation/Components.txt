@@ -24,6 +24,7 @@ DocumentDAO
 	-getSubFolder (documentId)
 	-moveDocument (username, subFolderId, documentId)
 	-doesDocumentExists (subFolderId, documentName)
+	-createDocument (name, format, summary, subfolderId)
 
 
 Controllers:

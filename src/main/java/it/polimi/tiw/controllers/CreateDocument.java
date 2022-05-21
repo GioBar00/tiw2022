@@ -1,6 +1,10 @@
 package it.polimi.tiw.controllers;
 
 import it.polimi.tiw.beans.Document;
+import it.polimi.tiw.beans.User;
+import it.polimi.tiw.dao.DocumentDAO;
+import it.polimi.tiw.dao.SubFolderDAO;
+import it.polimi.tiw.enums.TemplatePages;
 import it.polimi.tiw.utils.ConnectionHandler;
 import it.polimi.tiw.utils.TemplateHandler;
 import org.thymeleaf.TemplateEngine;
@@ -54,27 +58,55 @@ public class CreateDocument extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int subFolderId;
-        boolean invalidRequest = false;
         try {
             subFolderId = Integer.parseInt(request.getParameter("subFolderId"));
+
+            SubFolderDAO subFolderDAO = new SubFolderDAO(this.connection);
+            User user = (User) request.getSession().getAttribute("user");
+
+            if (subFolderDAO.checkOwner(user.id(), subFolderId)) {
+
+                request.getSession().setAttribute("subFolderId", subFolderId);
+                String path = "WEB-INF/home/contentManagement";
+                ServletContext servletContext = getServletContext();
+                final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+                ctx.setVariable("userRequest", 2);
+                templateEngine.process(path, ctx, response.getWriter());
+            }
+
+            else response.sendRedirect(String.valueOf(TemplatePages.HOME));
         } catch (NullPointerException | NumberFormatException e) {
-            invalidRequest = true;
-        }
-
-        if (invalidRequest) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Parameters");
+        } catch (SQLException e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while processing the request");
         }
+    }
 
-        Document document;
-        //TODO
-        //check the validity of the document id with document dao if invalid redirect to the last page.
-        //getting the document with the dao
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String name = request.getParameter("name");
+        String format = request.getParameter("format");
+        String summary = request.getParameter("summary");
 
-        String path = "WEB-INF/Home/Document";
-        ServletContext servletContext = getServletContext();
-        final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-        //ctx.setVariable("document", document);
-        templateEngine.process(path, ctx, response.getWriter());
+        if(name != null && name.length()>0 && name.length()<=50)
+            if( format != null && format.length()> 0 && format.length()<=10)
+                if(summary != null && summary.length()>0 && summary.length()<= 200){
+                    DocumentDAO documentDAO = new DocumentDAO(this.connection);
+                    try {
+                        if(documentDAO.createDocument(name,format,summary, (Integer) request.getSession().getAttribute("subFolderId"))){
+                            request.getSession().removeAttribute("subFolderId");
+                            response.sendRedirect(String.valueOf(TemplatePages.HOME));
+                            return;
+                        }
+                    } catch (SQLException e) {
+                        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while processing the request");
+                    }
+                }
+        
+        final WebContext webContext = new WebContext(request, response, getServletContext(), request.getLocale());
+        webContext.setVariable("error", true);
+        templateEngine.process(request.getContextPath(), webContext, response.getWriter());
+
     }
 
     /**

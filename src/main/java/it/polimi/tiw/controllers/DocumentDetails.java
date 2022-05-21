@@ -1,8 +1,13 @@
 package it.polimi.tiw.controllers;
 
+import it.polimi.tiw.beans.Document;
+import it.polimi.tiw.beans.User;
+import it.polimi.tiw.dao.DocumentDAO;
+import it.polimi.tiw.enums.TemplatePages;
 import it.polimi.tiw.utils.ConnectionHandler;
 import it.polimi.tiw.utils.TemplateHandler;
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -42,15 +47,28 @@ public class DocumentDetails extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String identifier = req.getParameter("id");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String identifier = request.getParameter("id");
         try {
             int id = Integer.parseInt(identifier);
-            //TODO: get the document from the database
+            DocumentDAO documentDAO = new DocumentDAO(this.connection);
+            User user = (User) request.getSession().getAttribute("user");
+            if(documentDAO.checkOwner(user.id(),id)){
 
+                Document document = documentDAO.getDocument(id);
+                String path = "WEB-INF/home/documents/document";
+
+                ServletContext servletContext = getServletContext();
+                final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+                ctx.setVariable("document", document);
+                templateEngine.process(path, ctx, response.getWriter());
+            }
+            else response.sendRedirect(String.valueOf(TemplatePages.HOME));
 
         } catch (NumberFormatException | NullPointerException e) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid document id");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid document id");
+        } catch (SQLException e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while processing the request");
         }
     }
 

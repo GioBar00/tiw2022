@@ -10,7 +10,9 @@ public enum TemplatePages {
     LOGIN("login"),
     REGISTER("register"),
 
-    HOME("home");
+    HOME("home"),
+
+    CONTENT_MANAGEMENT("contentManagement");
 
     private final String value;
 

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ContentManagment</title>
+    <title>ContentManagement</title>
 </head>
 <body>
     <div th:switch ="${userRequest}">
@@ -52,6 +52,8 @@
         </div>
 
     </div>
+
+    <div th:text = "${error == true} ?: 'Error'"></div>
     <a href="home.html">Go to Home page</a>
 </body>
 </html>
