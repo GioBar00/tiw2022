@@ -7,9 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class is the Data Access Object for the Folder.
@@ -22,6 +20,7 @@ public class FolderDAO {
 
     /**
      * Constructor.
+     *
      * @param connection the {@link Connection} to the database.
      */
     public FolderDAO(Connection connection) {
@@ -30,6 +29,7 @@ public class FolderDAO {
 
     /**
      * This method checks if a folder exists with the given id and owner.
+     *
      * @param id the id of the folder.
      * @return if the folder exists.
      * @throws SQLException if an error occurs during the query.
@@ -46,6 +46,7 @@ public class FolderDAO {
 
     /**
      * This method returns the {@link Folder} with the given id.
+     *
      * @param id the id of the folder.
      * @return the {@link Folder} with the given id, null if it does not exist.
      * @throws SQLException if an error occurs during the query.
@@ -63,14 +64,34 @@ public class FolderDAO {
         return null;
     }
 
+    /**
+     * This method returns a map of the {@link Folder}s of a specified user with the corresponding {@link SubFolder}s.
+     *
+     * @param ownerId the id of the owner.
+     * @return a map of the {@link Folder}s of a specified user with the corresponding {@link SubFolder}s.
+     * @throws SQLException if an error occurs during the query.
+     */
     public Map<Folder, List<SubFolder>> getFoldersWithSubFolders(int ownerId) throws SQLException {
-        String query = "SELECT idfolder FROM folder f INNER JOIN subfolder s ON f.idfolder = s.folder_idfolder WHERE f.user_iduser = ?";
+        String query = "SELECT * FROM folder f INNER JOIN subfolder s ON f.idfolder = s.folder_idfolder WHERE f.user_iduser = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, ownerId);
             ResultSet resultSet = statement.executeQuery();
             Map<Folder, List<SubFolder>> folders = new HashMap<>();
             while (resultSet.next()) {
-
+                int idfolder = resultSet.getInt("idfolder");
+                Folder folder;
+                Optional<Folder> optionalFolder = folders.keySet().stream().filter(f -> f.id() == idfolder).findFirst();
+                if (optionalFolder.isPresent()) {
+                    folder = optionalFolder.get();
+                } else {
+                    folder = new Folder(idfolder, resultSet.getString("f.name"),
+                            resultSet.getDate("f.creationDate"), resultSet.getInt("user_iduser"));
+                    folders.put(folder, new LinkedList<>());
+                }
+                List<SubFolder> subFolders = folders.get(folder);
+                subFolders.add(new SubFolder(resultSet.getInt("idsubforlder"),
+                        resultSet.getString("s.name"), resultSet.getDate("s.creationDate"),
+                        resultSet.getInt("s.folder_idfolder")));
             }
             return folders;
         }

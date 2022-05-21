@@ -47,13 +47,9 @@ public class DocumentDAO {
                     resultSet.getString("name"),
                     resultSet.getString("format"),
                     resultSet.getString("summary"),
-                    (Date) new SimpleDateFormat("dd/MM/yyyy").parse(resultSet.getString("creationDate")),
+                    resultSet.getDate("creationDate"),
                     resultSet.getInt("subfolder_idsubfolder")
             );
-
-
-        } catch (ParseException e) {
-            return null;
         }
     }
 
