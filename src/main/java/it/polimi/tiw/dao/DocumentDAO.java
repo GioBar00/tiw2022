@@ -27,6 +27,30 @@ public class DocumentDAO {
         this.connection = connection;
     }
 
+    /**
+     * This method checks if the name could be valid
+     * @return true the name could be valid, false otherwise
+     */
+    public boolean checkName(String name){
+        return (name != null && name.length() > 0 && name.length() <= 50);
+    }
+
+    /**
+     * This method checks if the format is valid
+     * @return true the format is valid, false otherwise
+     */
+    public boolean checkFormat(String format){
+        return (format != null && format.length() > 0 && format.length() <= 10);
+    }
+
+    /**
+     * This method checks if the summary is valid
+     * @return true the summary is valid, false otherwise
+     */
+    public boolean checkSummary(String summary){
+        return (summary != null && summary.length() > 0 && summary.length() <= 200);
+    }
+
     public boolean doesDocumentExists() {
         //TODO
         return false;

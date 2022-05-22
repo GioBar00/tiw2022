@@ -18,11 +18,13 @@
                 <li th:each = "folder : ${folders}" th:text = "folder.name">
                     <form action="#" th:action="@{/CreateSubFolder?folderId=${folder.id}}">
                         <input type="submit" value="Create a SubFolder"/>
+                        <input type="hidden" id="folderId" name="folderId" value="" th:value = "${folder.id}">
                     </form>
                     <ul>
                         <li th:each = "subFolder : ${folder.subFolder}" th:text = "subFolder.name">
                             <form action="#" th:action="@{/CreateDocument?subFolderId=${subFolder.id}}">
                                 <input type="submit" value="Create a Document"/>
+                                <input type="hidden" id="subFolderId" name="subFolderId" value="" th:value = "${subFolder.id}">
                             </form>
                         </li>
                     </ul>
@@ -35,6 +37,7 @@
             <form action="#" th:action="@{/CreateSubFolder}" method = "POST">
                 <label for="subFolder">SubFolder name:</label>
                 <input type="text" id="subFolder" name="subFolder"><br><br>
+                <input type="hidden" id="fldrId" name="fldrId" value="" th:value = "${FldrId}">
                 <input type="submit" value="Create sub Folder">
             </form>
         </div>
@@ -48,12 +51,12 @@
                 <label for="summary">Summary :</label>
                 <input type="text" id="summary" name="summary"><br><br>
                 <input type="submit" value="Crate Document">
+                <input type="hidden" id="subFldrId" name="subFldrId" value="" th:value = "${subFolderId}">
             </form>
         </div>
 
     </div>
 
-    <div th:text = "${error == true} ?: 'Error'"></div>
     <a href="home.html">Go to Home page</a>
 </body>
 </html>

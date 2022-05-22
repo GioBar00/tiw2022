@@ -24,6 +24,14 @@ public class SubFolderDAO {
         this.connection = connection;
     }
 
+    /**
+     * This method checks if the name could be valid
+     * @return true the name could be valid, false otherwise
+     */
+    public boolean checkName(String name){
+        return (name != null && name.length() > 0 && name.length() <= 50);
+    }
+
     public boolean doesSubFolderExist(int folderId, String subFolderName) {
         //TODO
         return false;

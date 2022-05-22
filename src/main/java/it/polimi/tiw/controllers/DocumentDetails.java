@@ -5,6 +5,7 @@ import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.DocumentDAO;
 import it.polimi.tiw.enums.TemplatePages;
 import it.polimi.tiw.utils.ConnectionHandler;
+import it.polimi.tiw.utils.InputValidator;
 import it.polimi.tiw.utils.TemplateHandler;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -35,7 +36,7 @@ public class DocumentDetails extends HttpServlet {
     private TemplateEngine templateEngine;
 
     /**
-     * Initialize the {@link Connection} to the database and the {@link TemplateEngine}.
+     * Initializes the {@link Connection} to the database and the {@link TemplateEngine}.
      *
      * @throws ServletException if the {@link Connection} to the database cannot be initialized.
      */
@@ -46,10 +47,25 @@ public class DocumentDetails extends HttpServlet {
         templateEngine = TemplateHandler.getTemplateEngine(context);
     }
 
+    /**
+     * Loads the document page with a view of the {@link Document}s in the {@link it.polimi.tiw.beans.SubFolder}
+     *
+     * @param request  an {@link HttpServletRequest} object that
+     *                 contains the request the client has made
+     *                 of the servlet
+     * @param response an {@link HttpServletResponse} object that
+     *                 contains the response the servlet sends
+     *                 to the client
+     * @throws IOException if an input or output error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-            int id = Integer.parseInt(request.getParameter("id"));
+            String documentId = request.getParameter("id");
+            if (!InputValidator.isInt(documentId, response))
+                return;
+
+            int id = Integer.parseInt(documentId);
             DocumentDAO documentDAO = new DocumentDAO(this.connection);
             User user = (User) request.getSession().getAttribute("user");
             if (documentDAO.checkOwner(user.id(), id)) {
@@ -70,7 +86,7 @@ public class DocumentDetails extends HttpServlet {
     }
 
     /**
-     * Close the {@link Connection} to the database.
+     * Closes the {@link Connection} to the database.
      */
     @Override
     public void destroy() {

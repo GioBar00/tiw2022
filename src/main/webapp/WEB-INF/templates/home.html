@@ -6,7 +6,7 @@
 </head>
 <body>
 
-    <div th:if = "${move == true}">
+    <div th:if = "${move == false}">
         <ul>
             <li th:each = "folder : ${folders}" th:text = "folder.name">
                 <ul>
@@ -19,14 +19,19 @@
     </div>
 
     <div th:if = "${move == true}">
-        <h3 th:text = "'Stai spostando il documento ' document 'dalla sottocartella ' fromSubFolder '. Scegli la sottocartella di destinazione'"></h3>
+        <h3 th:text = "'Stai spostando il documento ' document.name 'dalla sottocartella ' fromSubFolder '. Scegli la sottocartella di destinazione'"></h3>
         <ul>
             <li th:each = "folder : ${folders}" th:text = "folder.name">
                 <ul>
                     <li th:each = "subFolder : ${folder.subFolder}">
-                        <a th:style="${subFolder.id == fromSubFolder ? 'color: red;' : 'color: black;'}"
+                        <p th:style="${subFolder.id == fromSubFolder ? 'color: red;' : 'color: black;'}"
                         th:if="${not subFolder.id == fromSubFolder.id}"
-                         th:text = "subFolder.name" th:href ="@{/documents?prodId=${subFolder.id}}"></a>
+                         th:text = "subFolder.name" >
+                        <form action="#" method="post">
+                            <button type="submit" name="selectedSubFolder" value="" th:value = "${subFolder.id}" >Select SubFolder</button>
+                            <input type="hidden" id="documentId" name="documentId" value="" th:value = "${document.id}">
+                        </form>
+                        </p>
                     </li>
                 </ul>
             </li>
