@@ -1,6 +1,7 @@
 package it.polimi.tiw.filters;
 
 import javax.servlet.*;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -9,6 +10,7 @@ import java.io.IOException;
 /**
  * Servlet Filter checks if the user is logged out.
  */
+@WebFilter({"/login", "/register"})
 public class LoggedOutChecker implements Filter {
     /**
      * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
@@ -26,7 +28,7 @@ public class LoggedOutChecker implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpSession session = httpRequest.getSession();
         if (!session.isNew() && session.getAttribute("user") != null) {
-            ((HttpServletResponse) response).sendRedirect("/");
+            ((HttpServletResponse) response).sendRedirect(((HttpServletRequest) request).getContextPath() + "/");
         } else {
             chain.doFilter(request, response);
         }

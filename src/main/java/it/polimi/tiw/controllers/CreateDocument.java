@@ -1,5 +1,6 @@
 package it.polimi.tiw.controllers;
 
+import it.polimi.tiw.beans.Document;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.DocumentDAO;
 import it.polimi.tiw.dao.SubFolderDAO;
@@ -20,7 +21,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-@WebServlet(name = "CreateDocument", value = "/CreateDocument")
+@WebServlet(name = "CreateDocument", value = "/create-document")
 public class CreateDocument extends HttpServlet {
     /**
      * {@link Connection} to the database

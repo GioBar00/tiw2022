@@ -22,7 +22,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 
-@WebServlet(name = "CreateSubFolder", value = "/CreateSubFolder")
+@WebServlet(name = "CreateSubFolder", value = "/create-subfolder")
 public class CreateSubFolder extends HttpServlet {
 
     /**

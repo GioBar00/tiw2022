@@ -46,6 +46,23 @@ public class FolderDAO {
     }
 
     /**
+     * This method checks if a folder exists with the given name and owner.
+     *
+     * @param name the name of the folder.
+     * @return if the folder exists.
+     * @throws SQLException if an error occurs during the query.
+     */
+    public boolean doesFolderWithNameExist(String name, int ownerId) throws SQLException {
+        String query = "SELECT idfolder FROM folder WHERE name = ? AND user_iduser = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, name);
+            statement.setInt(2, ownerId);
+            ResultSet resultSet = statement.executeQuery();
+            return resultSet.next();
+        }
+    }
+
+    /**
      * This method returns the {@link Folder} with the given id.
      *
      * @param id the id of the folder.
@@ -113,5 +130,15 @@ public class FolderDAO {
             statement.setInt(3, ownerId);
             return statement.executeUpdate() > 0;
         }
+    }
+
+    /**
+     * This method checks is the name of the folder is valid.
+     * @param name the name of the folder.
+     * @return if the name is valid.
+     */
+    public static boolean isNameValid(String name) {
+        return name.matches("^([\\w()\\[\\]\\-.]+\\.?)*[\\w()\\[\\]\\-]+$") &&
+                name.length() <= 50;
     }
 }

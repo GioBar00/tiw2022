@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@WebServlet(name = "MoveDocument", value = "/moveDocument")
+@WebServlet(name = "MoveDocument", value = "/move-document")
 public class MoveDocument extends HttpServlet {
 
     /**
