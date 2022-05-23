@@ -7,15 +7,16 @@
 <body>
 <h2>Login Form</h2>
 <form action="#" method="POST">
-    <lable for="username"> Username:</lable><br>
-    <label for="username"></label><input type="text" id="username" name="username"><br>
+    <lable for="identifier"> Username:</lable><br>
+    <label for="identifier"></label><input type="text" id="identifier" name="identifier"><br>
     <label for="password">Password: </label><br>
     <input type="text" id="password" name="password"><br>
 
     <input type="Submit" value="Submit">
 </form>
 
-<a href="register.html"> Go to subscription Form</a>
-<p th:text = "${error == true} ?: 'Error'"></p>
+<a href="register"> Go to subscription Form</a>
+
+<p th:text = "${error == true} ? 'Error' : ''"></p>
 </body>
 </html>

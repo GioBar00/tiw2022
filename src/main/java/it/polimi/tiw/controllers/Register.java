@@ -70,7 +70,7 @@ public class Register extends HttpServlet {
                     resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid error code");
                     return;
                 }
-                webContext.setVariable("error", error);
+                webContext.setVariable("error", true);
             } catch (NumberFormatException e) {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid error code");
                 return;

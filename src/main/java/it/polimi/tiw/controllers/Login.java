@@ -99,6 +99,7 @@ public class Login extends HttpServlet {
                 user = userDAO.checkUsernameCredentials(identifier, password);
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while checking credentials");
             return;
         }

@@ -9,16 +9,25 @@
 <form action="#" method="POST">
     <lable for="username"> Username:</lable><br>
     <label for="username"></label><input type="text" id="username" name="username"><br>
+    <label for="name">Name: </label><br>
+    <input type="text" id="name" name="name"><br>
+    <label for="surname">Surname: </label><br>
+    <input type="text" id="surname" name="surname"><br>
     <lable for="email"> Email:</lable><br>
     <label for="email"></label><input type="text" id="email" name="email"><br>
     <label for="password">Password: </label><br>
     <input type="text" id="password" name="password"><br>
+    <label for="confirmPassword">Confirm password: </label><br>
+    <input type="text" id="confirmPassword" name="confirmPassword"><br>
+
 
     <input type="Submit" value="Submit">
 </form>
 
-<p th:text = "${error == true} ?: 'Error'"></p>
+<a href="login">Go to Login Page</a>
 
-<a href="login.html">Go to Login Page</a>
+<p th:text = "${error == true} ? 'Error' : ''"></p>
+
+
 </body>
 </html>
