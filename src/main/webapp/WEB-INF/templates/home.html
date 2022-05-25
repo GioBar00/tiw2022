@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,39 +7,44 @@
 </head>
 <body>
 
-    <div th:if = "${move == false}">
-        <ul>
-            <li th:each = "folder : ${folders}" th:text = "folder.name">
-                <ul>
-                    <li th:each = "subFolder : ${folder.subFolder}">
-                        <a  th:text = "subFolder.name" th:href ="@{/documents?subFolderId=${subFolder.id}}"></a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-    </div>
+    <div th:switch= "${move}">
+        <div th:case = "false">
+            <ul>
 
-    <div th:if = "${move == true}">
-        <h3 th:text = "'Stai spostando il documento ' document.name 'dalla sottocartella ' fromSubFolder '. Scegli la sottocartella di destinazione'"></h3>
+                <li th:each = "folder : ${folders}" th:class="Folder">
+                    <div th:text = "'Folder  ->' + ${folder.key.name}"></div>
+                    <ul>
+                        <li th:each="subFolder : ${folder.value}">
+                            <a  th:text = "${subFolder.name}" th:href ="@{/documents(subFolder=${subFolder.id})}"></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+    <div th:case = "true">
+        <h3 th:text = "'Stai spostando il documento : ' + ${document.name} + ' dalla sottocartella : ' + ${fromSubFolder} + '. Scegli la sottocartella di destinazione'"></h3>
         <ul>
-            <li th:each = "folder : ${folders}" th:text = "folder.name">
+            <li th:each = "folder : ${folders}">
+                <div  th:text = "${folder.key.name}" ></div>
                 <ul>
-                    <li th:each = "subFolder : ${folder.subFolder}">
+                    <li th:each = "subFolder : ${folder.value}">
                         <p th:style="${subFolder.id == fromSubFolder ? 'color: red;' : 'color: black;'}"
-                        th:if="${not subFolder.id == fromSubFolder.id}"
-                         th:text = "subFolder.name" >
-                        <form action="#" method="post">
+                           th:text = "${subFolder.name}" ></p>
+                        <form th:if="${subFolder.id != fromSubFolder}" action="#" method="post">
                             <button type="submit" name="selectedSubFolder" value="" th:value = "${subFolder.id}" >Select SubFolder</button>
                             <input type="hidden" id="documentId" name="documentId" value="" th:value = "${document.id}">
                         </form>
-                        </p>
+
                     </li>
                 </ul>
             </li>
         </ul>
+        <a th:text="'Undo'" th:href = "@{/documents(subFolder=${session.lastPage})}"></a>
+    </div>
     </div>
 
-<a href = "contentManagement.html"> Go to Gestione Contenuti</a>
+<a href = "content-management"> Go to Gestione Contenuti</a>
 
 </body>
 </html>

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,9 +8,10 @@
 <body>
 <ul>
     <li th:each = "document : ${documents}"   >
-        <p th:text = "document.name">
-        <a th:href = "@{/document?documentId=${document.id}}"> Accedi </a>
-        <a th:href="@{/document/move?documentId=${document.id}}"> Sposta </a>
+        <p>
+        <a th:text = "${document.name}" ></a>
+        <a th:text = "Accedi" th:href = "@{/document(documentId=${document.id})}"> Accedi </a>
+        <a th:text = "Sposta" th:href="@{/move-document(documentId=${document.id})}"> Sposta </a>
         </p>
     </li>
 </ul>

@@ -90,7 +90,7 @@ public class FolderDAO {
      * @throws SQLException if an error occurs during the query.
      */
     public Map<Folder, List<SubFolder>> getFoldersWithSubFolders(int ownerId) throws SQLException {
-        String query = "SELECT * FROM folder f INNER JOIN subfolder s ON f.idfolder = s.folder_idfolder WHERE f.user_iduser = ?";
+        String query = "SELECT * FROM folder f WHERE f.user_iduser = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, ownerId);
             ResultSet resultSet = statement.executeQuery();
@@ -106,10 +106,21 @@ public class FolderDAO {
                             resultSet.getDate("f.creationDate"), resultSet.getInt("user_iduser"));
                     folders.put(folder, new LinkedList<>());
                 }
-                List<SubFolder> subFolders = folders.get(folder);
-                subFolders.add(new SubFolder(resultSet.getInt("idsubforlder"),
-                        resultSet.getString("s.name"), resultSet.getDate("s.creationDate"),
-                        resultSet.getInt("s.folder_idfolder")));
+            }
+            if (folders.size() > 0) {
+                for (Folder f : folders.keySet()) {
+                    String queryS = "SELECT * FROM folder f  INNER JOIN subfolder s ON f.idfolder = s.folder_idfolder WHERE f.idfolder = ?";
+                    try (PreparedStatement statementS = connection.prepareStatement(queryS)) {
+                        statementS.setInt(1, f.id());
+                        ResultSet resultSetS = statementS.executeQuery();
+                        while (resultSetS.next()) {
+                            List<SubFolder> subFolders = folders.get(f);
+                            subFolders.add(new SubFolder(resultSetS.getInt("idsubfolder"),
+                                    resultSetS.getString("s.name"), resultSetS.getDate("s.creationDate"),
+                                    resultSetS.getInt("s.folder_idfolder")));
+                        }
+                    }
+                }
             }
             return folders;
         }
@@ -117,7 +128,8 @@ public class FolderDAO {
 
     /**
      * This method creates a new {@link Folder}.
-     * @param name the name of the folder.
+     *
+     * @param name    the name of the folder.
      * @param ownerId the id of the owner.
      * @return if the folder was created.
      * @throws SQLException if an error occurs during the query.
@@ -134,6 +146,7 @@ public class FolderDAO {
 
     /**
      * This method checks is the name of the folder is valid.
+     *
      * @param name the name of the folder.
      * @return if the name is valid.
      */

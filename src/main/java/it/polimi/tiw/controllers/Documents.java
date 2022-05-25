@@ -60,7 +60,12 @@ public class Documents extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-            String subId = request.getParameter("subFolderId");
+            String subId = request.getParameter("subFolder");
+
+            if (subId == null || subId.isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data are not correct");
+                return;
+            }
 
             if (!InputValidator.isInt(subId, response))
                 return;
@@ -73,6 +78,8 @@ public class Documents extends HttpServlet {
             if (subFolderDAO.checkOwner(user.id(), subFolderId)) {
 
                 documents = subFolderDAO.getDocuments(subFolderId);
+
+                request.getSession().setAttribute("lastPage", subId);
 
                 ServletContext servletContext = getServletContext();
                 final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());

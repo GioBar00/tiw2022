@@ -46,7 +46,7 @@ public class SubFolderDAO {
      * @throws SQLException if an error occurs during the query.
      */
     public boolean checkOwner(int userId, int subFolderId) throws SQLException {
-        String query = "SELECT u.user_iduser FROM (subfolder s INNER JOIN folder f ON s.folder_idfolder = f.idfolder) INNER JOIN user u f ON u.iduser = f.user_iduser WHERE s.idsubfolder = ? AND u.iduser = ?";
+        String query = "SELECT u.iduser FROM (subfolder s INNER JOIN folder f ON s.folder_idfolder = f.idfolder) INNER JOIN user u ON u.iduser = f.user_iduser WHERE s.idsubfolder = ? AND u.iduser = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, subFolderId);
             statement.setInt(2, userId);
@@ -99,14 +99,13 @@ public class SubFolderDAO {
      * @throws SQLException if an error occurs during the query.
      */
     public boolean createSubFolder(String name, Date creationDate, int folderID) throws SQLException {
-        String query = "INSERT INTO subfolder (name, creationdate, folder_idfolder) VALUES (?, ?, ?)";
+        String query = "INSERT INTO subfolder(name, creationDate, folder_idfolder) VALUES (?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, name);
             statement.setDate(2, creationDate);
             statement.setInt(3, folderID);
-            ResultSet resultSet = statement.executeQuery();
 
-            return resultSet.next();
+            return statement.executeUpdate() > 0;
         }
     }
 

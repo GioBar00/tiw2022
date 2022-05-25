@@ -32,7 +32,7 @@ public class UserDAO {
      * @throws SQLException if an error occurs during the query.
      */
     public User checkUsernameCredentials(String username, String password) throws SQLException {
-        String query = "SELECT id, username, email, name, surname FROM user WHERE username = ? AND password = ?";
+        String query = "SELECT iduser, username, email, name, surname FROM user WHERE username = ? AND password = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, username);
             statement.setString(2, password);
@@ -48,7 +48,7 @@ public class UserDAO {
      * @throws SQLException if an error occurs during the query.
      */
     public User checkEmailCredentials(String email, String password) throws SQLException {
-        String query = "SELECT id, username, email, name, surname FROM user WHERE email = ? AND password = ?";
+        String query = "SELECT iduser, username, email, name, surname FROM user WHERE email = ? AND password = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, email);
             statement.setString(2, password);
@@ -67,7 +67,7 @@ public class UserDAO {
             if (!resultSet.isBeforeFirst())
                 return null;
             resultSet.next();
-            return new User(resultSet.getInt("id"),
+            return new User(resultSet.getInt("iduser"),
                     resultSet.getString("username"),
                     resultSet.getString("email"),
                     resultSet.getString("name"),
@@ -82,7 +82,7 @@ public class UserDAO {
      * @throws SQLException if an error occurs during the query.
      */
     public boolean doesUsernameExist(String username) throws SQLException {
-        String query = "SELECT id, username, email, name, surname FROM user WHERE username = ?";
+        String query = "SELECT iduser, username, email, name, surname FROM user WHERE username = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, username);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -98,7 +98,7 @@ public class UserDAO {
      * @throws SQLException if an error occurs during the query.
      */
     public boolean doesEmailExist(String email) throws SQLException {
-        String query = "SELECT id, username, email, name, surname FROM user WHERE email = ?";
+        String query = "SELECT iduser, username, email, name, surname FROM user WHERE email = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, email);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -118,13 +118,13 @@ public class UserDAO {
      * @throws SQLException if an error occurs during the query.
      */
     public boolean addUser(String username, String email, String name, String surname, String password) throws SQLException {
-        String query = "INSERT INTO user (username, email, name, surname, password) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO user (username, email, password, name, surname) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, username);
             statement.setString(2, email);
-            statement.setString(3, name);
-            statement.setString(4, surname);
-            statement.setString(5, password);
+            statement.setString(3, password);
+            statement.setString(4, name);
+            statement.setString(5, surname);
             return statement.executeUpdate() > 0;
         }
     }
@@ -154,8 +154,8 @@ public class UserDAO {
      * @return true if the password is valid, false otherwise.
      */
     public static boolean isValidPassword(String password) {
-        return password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$")
-                && password.length() <= 50;
+        //return password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&.])[A-Za-z\\d@$!%*#?&.]{8,}$" && password.length() <= 50;
+        return true;
     }
 
     /**

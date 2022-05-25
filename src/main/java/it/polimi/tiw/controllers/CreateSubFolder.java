@@ -61,20 +61,27 @@ public class CreateSubFolder extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-            String id = request.getParameter("folderId");
+            String id = request.getParameter("FolderId");
 
-            if (!InputValidator.isInt(id, response))
+            if(id == null || id.isEmpty()){
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data are not correct");
                 return;
+            }
+
+            if (!InputValidator.isInt(id, response)){
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Parameters");
+                return;
+            }
 
             int folderId = Integer.parseInt(id);
             FolderDAO folderDAO = new FolderDAO(this.connection);
             User user = (User) request.getSession().getAttribute("user");
 
-            if (folderDAO.doesFolderExist(user.id(), folderId)) {
+            if (folderDAO.doesFolderExist(folderId, user.id())) {
                 ServletContext servletContext = getServletContext();
                 final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
                 ctx.setVariable("userRequest", 1);
-                ctx.setVariable("fldrId", folderId);
+                ctx.setVariable("FldrId", folderId);
                 templateEngine.process(TemplatePages.CONTENT_MANAGEMENT.getValue(), ctx, response.getWriter());
             } else response.sendRedirect(getServletContext().getContextPath() + "/");
         } catch (NullPointerException | NumberFormatException e) {
@@ -97,8 +104,13 @@ public class CreateSubFolder extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String folderId = request.getParameter("folderId");
+        String folderId = request.getParameter("fldrId");
         String subFolder = request.getParameter("subFolder");
+
+        if(folderId == null || folderId.isEmpty() || subFolder ==null || subFolder.isEmpty()){
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data are not correct");
+            return;
+        }
 
         if (!InputValidator.isInt(folderId, response))
             return;

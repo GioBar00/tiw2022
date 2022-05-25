@@ -3,10 +3,7 @@ package it.polimi.tiw.dao;
 import it.polimi.tiw.beans.Document;
 import it.polimi.tiw.beans.SubFolder;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 /**
  * This class is the Data Access Object for the Document
@@ -29,25 +26,28 @@ public class DocumentDAO {
 
     /**
      * This method checks if the name could be valid
+     *
      * @return true the name could be valid, false otherwise
      */
-    public boolean checkName(String name){
+    public boolean checkName(String name) {
         return (name != null && name.length() > 0 && name.length() <= 50);
     }
 
     /**
      * This method checks if the format is valid
+     *
      * @return true the format is valid, false otherwise
      */
-    public boolean checkFormat(String format){
+    public boolean checkFormat(String format) {
         return (format != null && format.length() > 0 && format.length() <= 10);
     }
 
     /**
      * This method checks if the summary is valid
+     *
      * @return true the summary is valid, false otherwise
      */
-    public boolean checkSummary(String summary){
+    public boolean checkSummary(String summary) {
         return (summary != null && summary.length() > 0 && summary.length() <= 200);
     }
 
@@ -65,7 +65,7 @@ public class DocumentDAO {
      * @throws SQLException if an error occurs during the query
      */
     public boolean checkOwner(int userId, int documentId) throws SQLException {
-        String query = "SELECT user_iduser FROM (document d INNER JOIN subfolder s ON d.subforlder_idsubforlder = s.idsubforlder) INNER JOIN folder f ON s.folder_idfolder = f.idfolder WHERE iddocument = ? AND user_iduser = ?";
+        String query = "SELECT user_iduser FROM (document d INNER JOIN subfolder s ON d.subfolder_idsubfolder = s.idsubfolder) INNER JOIN folder f ON s.folder_idfolder = f.idfolder WHERE iddocument = ? AND user_iduser = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, String.valueOf(documentId));
             statement.setString(2, String.valueOf(userId));
@@ -94,12 +94,32 @@ public class DocumentDAO {
             resultSet.next();
             return new Document(resultSet.getInt("iddocument"),
                     resultSet.getString("name"),
+                    findOwner(documentId),
                     resultSet.getString("format"),
                     resultSet.getString("summary"),
                     resultSet.getDate("creationDate"),
                     resultSet.getInt("subfolder_idsubfolder")
             );
         }
+    }
+
+    /**
+     * This method returns the owner of a document
+     * @param documentId the id of the document.
+     * @return the username of the owner
+     * @throws SQLException if an error occurs during the query
+     */
+    private String findOwner(int documentId) throws SQLException {
+        String query = "SELECT u.username FROM ((document d INNER JOIN subfolder s ON d.subfolder_idsubfolder = s.idsubfolder) INNER JOIN folder f ON s.folder_idfolder = f.idfolder) INNER JOIN user u ON f.user_iduser = u.iduser WHERE iddocument = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, documentId);
+            ResultSet resultSet = statement.executeQuery();
+
+            resultSet.next();
+            return resultSet.getString("username");
+
+        }
+
     }
 
     /**
@@ -110,7 +130,7 @@ public class DocumentDAO {
      * @throws SQLException if an error occurs during the query.
      */
     public SubFolder getSubFolder(String documentId) throws SQLException {
-        String query = "SELECT * FROM  (subFoldrer s LEFT JOIN document d ON d.subforlder_idsubforlder = s.idsubfolder)WHERE iddocument = ?";
+        String query = "SELECT * FROM  (subfolder s LEFT JOIN document d ON d.subfolder_idsubfolder = s.idsubfolder)WHERE iddocument = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, Integer.parseInt(documentId));
             ResultSet resultSet = statement.executeQuery();
@@ -153,15 +173,15 @@ public class DocumentDAO {
      * @throws SQLException if an error occurs during the query.
      */
     public boolean createDocument(String name, String format, String summary, int subFolderId) throws SQLException {
-        String query = "INSERT INTO documet (name, format, summary, subfolder_idsubfolder) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO document (name, format, summary, creationDate, subfolder_idsubfolder) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, name);
             statement.setString(2, format);
             statement.setString(3, summary);
-            statement.setInt(4, subFolderId);
-            ResultSet resultSet = statement.executeQuery();
+            statement.setDate(4, new Date(new java.util.Date().getTime()));
+            statement.setInt(5, subFolderId);
 
-            return resultSet.next();
+            return statement.executeUpdate() > 0;
         }
     }
 }

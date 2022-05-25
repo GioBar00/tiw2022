@@ -15,22 +15,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.Serial;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-/**
- * This class is the controller for the home page.
- */
-@WebServlet(name = "HomePage", value = "/")
-public class HomePage extends HttpServlet {
-    @Serial
-    private static final long serialVersionUID = 1L;
+@WebServlet(name = "ContentManagement", value = "/content-management")
+public class ContentManagement extends HttpServlet {
 
     /**
      * {@link Connection} to the database.
      */
     private Connection connection;
+
     /**
      * {@link TemplateEngine} to render the template.
      */
@@ -49,7 +44,7 @@ public class HomePage extends HttpServlet {
     }
 
     /**
-     * Loads the home page.
+     * Loads the content management page.
      *
      * @param req  an {@link HttpServletRequest} object that
      *             contains the request the client has made
@@ -65,22 +60,11 @@ public class HomePage extends HttpServlet {
             FolderDAO folderDAO = new FolderDAO(connection);
             final WebContext ctx = new WebContext(req, resp, req.getServletContext(), req.getLocale());
             User user = (User) req.getSession().getAttribute("user");
-            ctx.setVariable("move", false);
+            ctx.setVariable("userRequest", 0);
             ctx.setVariable("folders", folderDAO.getFoldersWithSubFolders(user.id()));
-            templateEngine.process(TemplatePages.HOME.getValue(), ctx, resp.getWriter());
+            templateEngine.process(TemplatePages.CONTENT_MANAGEMENT.getValue(), ctx, resp.getWriter());
         } catch (SQLException e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while retrieving folders");
-        }
-    }
-
-    /**
-     * Close the {@link Connection} to the database.
-     */
-    @Override
-    public void destroy() {
-        try {
-            ConnectionHandler.closeConnection(connection);
-        } catch (SQLException ignored) {
         }
     }
 }

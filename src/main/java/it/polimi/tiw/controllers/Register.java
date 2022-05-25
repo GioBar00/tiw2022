@@ -139,7 +139,7 @@ public class Register extends HttpServlet {
                 return;
             }
 
-            if (userDAO.addUser(username, email, password, name, surname))
+            if (userDAO.addUser(username, email, name, surname, password))
                 resp.sendRedirect(req.getContextPath() + "/login?success=true");
             else
                 resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unknown error while creating account");

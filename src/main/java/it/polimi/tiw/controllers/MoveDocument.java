@@ -68,6 +68,10 @@ public class MoveDocument extends HttpServlet {
 
         String docId = request.getParameter("documentId");
 
+        if (docId == null || docId.isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data are not correct");
+            return;
+        }
         if (!InputValidator.isInt(docId, response))
             return;
 
@@ -79,7 +83,6 @@ public class MoveDocument extends HttpServlet {
             Document document = documentDAO.getDocument(Integer.parseInt(docId));
             if (document != null) {
                 int fromSubFolder = document.subFolderId();
-                boolean move = true;
                 if (subFolderDAO.checkOwner(user.id(), fromSubFolder)) {
 
                     FolderDAO folderDAO = new FolderDAO(this.connection);
@@ -87,7 +90,7 @@ public class MoveDocument extends HttpServlet {
 
                     ServletContext servletContext = getServletContext();
                     final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-                    ctx.setVariable("move", move);
+                    ctx.setVariable("move", true);
                     ctx.setVariable("document", document);
                     ctx.setVariable("fromSubFolder", fromSubFolder);
                     ctx.setVariable("folders", folders);
@@ -116,6 +119,12 @@ public class MoveDocument extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String selectedSubFolder = request.getParameter("selectedSubFolder");
         String documentId = request.getParameter("documentId");
+
+        if (selectedSubFolder == null || documentId == null || selectedSubFolder.isEmpty() || documentId.isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data are not correct");
+            return;
+        }
+
 
         if (!InputValidator.isInt(selectedSubFolder, response) || !InputValidator.isInt(documentId, response))
             return;

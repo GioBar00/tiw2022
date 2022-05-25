@@ -61,8 +61,10 @@ public class CreateDocument extends HttpServlet {
         try {
             String subId = request.getParameter("subFolderId");
 
-            if (!InputValidator.isInt(subId, response))
+            if(subId == null || subId.isEmpty() || !InputValidator.isInt(subId, response)){
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data are not correct");
                 return;
+            }
 
             int subFolderId = Integer.parseInt(subId);
             SubFolderDAO subFolderDAO = new SubFolderDAO(this.connection);
@@ -100,7 +102,15 @@ public class CreateDocument extends HttpServlet {
         String name = request.getParameter("name");
         String format = request.getParameter("format");
         String summary = request.getParameter("summary");
-        String subFolderId = request.getParameter("subFldId");
+        String subFolderId = request.getParameter("subFldrId");
+
+        if(name == null || name.isEmpty())
+            if(format == null || format.isEmpty())
+                if(summary == null || summary.isEmpty())
+                    if(subFolderId == null || subFolderId.isEmpty()){
+                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data are not correct");
+                        return;
+                    }
 
         if (!InputValidator.isInt(subFolderId, response))
             return;
@@ -136,4 +146,6 @@ public class CreateDocument extends HttpServlet {
         } catch (SQLException ignored) {
         }
     }
+
+
 }

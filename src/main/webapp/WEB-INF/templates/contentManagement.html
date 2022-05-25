@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,24 +9,36 @@
     <div th:switch ="${userRequest}">
 
         <div th:case = "0">
-            <form action="#" th:action="@{/CreateFolder}" method="POST">
+            <form action="#" th:action="@{/create-folder}" method="POST">
             <label for="folder">Folder name :</label>
             <input type="text" id="folder" name="folder"><br><br>
             <input type="submit" value="Create a Folder">
             </form>
 
             <ul>
-                <li th:each = "folder : ${folders}" th:text = "folder.name">
-                    <form action="#" th:action="@{/CreateSubFolder?folderId=${folder.id}}">
-                        <input type="submit" value="Create a SubFolder"/>
-                        <input type="hidden" id="folderId" name="folderId" value="" th:value = "${folder.id}">
-                    </form>
-                    <ul>
-                        <li th:each = "subFolder : ${folder.subFolder}" th:text = "subFolder.name">
-                            <form action="#" th:action="@{/CreateDocument?subFolderId=${subFolder.id}}">
-                                <input type="submit" value="Create a Document"/>
-                                <input type="hidden" id="subFolderId" name="subFolderId" value="" th:value = "${subFolder.id}">
+                <li th:each = "folder : ${folders}" >
+                    <p>
+                        <a th:utext = "${folder.key.name}"></a>
+                        <div>
+                            <form action="#" th:action="@{/create-subfolder}"  method="GET">
+                                <input type="hidden" id="FolderId" name="FolderId" value="" th:value = "${folder.key.id}">
+                                <input type="submit" value="Create a SubFolder"/>
                             </form>
+                        </div>
+                    </p>
+
+
+                    <ul>
+                        <li th:each = "subFolder : ${folder.value}">
+                            <p>
+                                <a th:utext = "${subFolder.name}"></a>
+                                <div>
+                                    <form action="#" th:action="@{/create-document}"  method="GET">
+                                        <input type="hidden" id="subFolderId" name="subFolderId" value="" th:value = "${subFolder.id}">
+                                        <input type="submit" value="Create a Document"/>
+                                    </form>
+                                </div>
+                            </p>
                         </li>
                     </ul>
                 </li>
@@ -34,30 +47,31 @@
 
 
         <div th:case = "1">
-            <form action="#" th:action="@{/CreateSubFolder}" method = "POST">
+            <form action="#" th:action="@{/create-subfolder}" method = "POST">
                 <label for="subFolder">SubFolder name:</label>
                 <input type="text" id="subFolder" name="subFolder"><br><br>
                 <input type="hidden" id="fldrId" name="fldrId" value="" th:value = "${FldrId}">
                 <input type="submit" value="Create sub Folder">
             </form>
         </div>
-        <div th:case = "2">
 
-            <form action="#" th:action="@{/CreateDocument}" method = "POST">
+        <div th:case = "2">
+            <form action="#" th:action="@{/create-document}" method = "POST">
                 <label for="name">Document name:</label>
                 <input type="text" id="name" name="name"><br><br>
                 <label for="format">Format :</label>
                 <input type="text" id="format" name="format"><br><br>
                 <label for="summary">Summary :</label>
                 <input type="text" id="summary" name="summary"><br><br>
-                <input type="submit" value="Crate Document">
                 <input type="hidden" id="subFldrId" name="subFldrId" value="" th:value = "${subFolderId}">
+                <input type="submit" value="Crate Document">
             </form>
         </div>
 
     </div>
 
-    <a href="home.html">Go to Home page</a>
+    <a href="home">Go to Home page</a>
+
 </body>
 </html>
 

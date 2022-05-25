@@ -80,8 +80,8 @@ public class CreateFolder extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String name = req.getParameter("name");
-        if (name == null || name.isEmpty() || FolderDAO.isNameValid(name)) {
+        String name = req.getParameter("folder");
+        if (name == null || name.isEmpty() || !FolderDAO.isNameValid(name)) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Name is not valid");
             return;
         }
