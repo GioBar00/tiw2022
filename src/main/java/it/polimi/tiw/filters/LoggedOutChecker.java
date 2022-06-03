@@ -28,7 +28,7 @@ public class LoggedOutChecker implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpSession session = httpRequest.getSession();
         if (!session.isNew() && session.getAttribute("user") != null) {
-            ((HttpServletResponse) response).sendRedirect(((HttpServletRequest) request).getContextPath() + "/");
+            ((HttpServletResponse) response).sendRedirect(((HttpServletRequest) request).getContextPath() + "/home");
         } else {
             chain.doFilter(request, response);
         }

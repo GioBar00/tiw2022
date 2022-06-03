@@ -82,7 +82,7 @@ public class DocumentDetails extends HttpServlet {
                 final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
                 ctx.setVariable("document", document);
                 templateEngine.process(TemplatePages.DOCUMENT.getValue(), ctx, response.getWriter());
-            } else response.sendRedirect(getServletContext().getContextPath() + "/");
+            } else response.sendRedirect(getServletContext().getContextPath() + "/home");
 
         } catch (NumberFormatException | NullPointerException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid document id");

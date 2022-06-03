@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LoginPage</title>
+</head>
+<body>
+<h2>Login Form</h2>
+<form action="#" method="POST">
+    <label for="identifier"> Username or email:</label><br>
+    <input type="text" id="identifier" name="identifier"><br>
+    <label for="password">Password: </label><br>
+    <input type="password" id="password" name="password"><br>
+
+    <input type="Submit" value="Submit">
+</form>
+
+<a href="register"> Go to subscription Form</a>
+
+<p th:text="${error == true} ? 'Error' : ''"></p>
+</body>
+</html>

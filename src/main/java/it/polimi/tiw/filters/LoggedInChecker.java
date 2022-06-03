@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * Servlet Filter checks if the user is logged in.
  */
-@WebFilter({"/", "/documents", "/document", "/move-document", "/create-folder", "/create-subfolder", "/create-document"})
+@WebFilter({"/home", "/documents", "/document", "/move-document", "/create-folder", "/create-subfolder", "/create-document"})
 public class LoggedInChecker implements Filter {
 
     /**

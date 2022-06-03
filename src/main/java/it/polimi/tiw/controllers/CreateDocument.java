@@ -78,7 +78,7 @@ public class CreateDocument extends HttpServlet {
                 ctx.setVariable("subFolderId", subFolderId);
                 templateEngine.process(TemplatePages.CONTENT_MANAGEMENT.getValue(), ctx, response.getWriter());
 
-            } else response.sendRedirect(getServletContext().getContextPath() + "/");
+            } else response.sendRedirect(getServletContext().getContextPath() + "/home");
         } catch (NullPointerException | NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Parameters");
         } catch (SQLException e) {
@@ -125,7 +125,7 @@ public class CreateDocument extends HttpServlet {
                     if (documentDAO.checkName(name) && documentDAO.checkFormat(format) && documentDAO.checkSummary(summary)) {
 
                         if (documentDAO.createDocument(name, format, summary, Integer.parseInt(subFolderId))) {
-                            response.sendRedirect(getServletContext().getContextPath() + "/");
+                            response.sendRedirect(getServletContext().getContextPath() + "/home");
                             return;
                         }
 

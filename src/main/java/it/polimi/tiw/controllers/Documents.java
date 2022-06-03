@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(name = "Documents", value = "/documents")
 public class Documents extends HttpServlet {
@@ -71,7 +72,7 @@ public class Documents extends HttpServlet {
                 return;
 
             int subFolderId = Integer.parseInt(subId);
-            ArrayList<Document> documents;
+            List<Document> documents;
             SubFolderDAO subFolderDAO = new SubFolderDAO(this.connection);
             User user = (User) request.getSession().getAttribute("user");
 
@@ -85,7 +86,7 @@ public class Documents extends HttpServlet {
                 final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
                 ctx.setVariable("documents", documents);
                 templateEngine.process(TemplatePages.DOCUMENTS.getValue(), ctx, response.getWriter());
-            } else response.sendRedirect(getServletContext().getContextPath() + "/");
+            } else response.sendRedirect(getServletContext().getContextPath() + "/home");
 
         } catch (NullPointerException | NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Parameters");

@@ -22,7 +22,7 @@ import java.sql.SQLException;
 /**
  * This class is the controller for the home page.
  */
-@WebServlet(name = "HomePage", value = "/")
+@WebServlet(name = "HomePage", value = "/home")
 public class HomePage extends HttpServlet {
     @Serial
     private static final long serialVersionUID = 1L;

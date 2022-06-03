@@ -51,9 +51,19 @@ public class DocumentDAO {
         return (summary != null && summary.length() > 0 && summary.length() <= 200);
     }
 
-    public boolean doesDocumentExists() {
-        //TODO
-        return false;
+    /**
+     * This method checks if a document with the same name already exists
+     *
+     * @return true if the document already exists, false otherwise
+     */
+    public boolean doesDocumentExists(int subFolderId, String name) throws SQLException {
+        String query = "SELECT * FROM document WHERE subfolder_idsubfolder = ? AND name = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, subFolderId);
+            statement.setString(2, name);
+            ResultSet resultSet = statement.executeQuery();
+            return resultSet.next();
+        }
     }
 
     /**
@@ -67,12 +77,10 @@ public class DocumentDAO {
     public boolean checkOwner(int userId, int documentId) throws SQLException {
         String query = "SELECT user_iduser FROM (document d INNER JOIN subfolder s ON d.subfolder_idsubfolder = s.idsubfolder) INNER JOIN folder f ON s.folder_idfolder = f.idfolder WHERE iddocument = ? AND user_iduser = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, String.valueOf(documentId));
+            statement.setInt(1, documentId);
             statement.setString(2, String.valueOf(userId));
             ResultSet resultSet = statement.executeQuery();
-
             return resultSet.next();
-
         }
     }
 
@@ -94,7 +102,6 @@ public class DocumentDAO {
             resultSet.next();
             return new Document(resultSet.getInt("iddocument"),
                     resultSet.getString("name"),
-                    findOwner(documentId),
                     resultSet.getString("format"),
                     resultSet.getString("summary"),
                     resultSet.getDate("creationDate"),
@@ -105,6 +112,7 @@ public class DocumentDAO {
 
     /**
      * This method returns the owner of a document
+     *
      * @param documentId the id of the document.
      * @return the username of the owner
      * @throws SQLException if an error occurs during the query

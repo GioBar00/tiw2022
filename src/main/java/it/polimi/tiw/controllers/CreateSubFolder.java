@@ -83,7 +83,7 @@ public class CreateSubFolder extends HttpServlet {
                 ctx.setVariable("userRequest", 1);
                 ctx.setVariable("FldrId", folderId);
                 templateEngine.process(TemplatePages.CONTENT_MANAGEMENT.getValue(), ctx, response.getWriter());
-            } else response.sendRedirect(getServletContext().getContextPath() + "/");
+            } else response.sendRedirect(getServletContext().getContextPath() + "/home");
         } catch (NullPointerException | NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Parameters");
         } catch (SQLException e) {
@@ -123,7 +123,7 @@ public class CreateSubFolder extends HttpServlet {
                 java.util.Date date = new java.util.Date();
                 long timeInMilliSeconds = date.getTime();
                 if (subFolderDAO.createSubFolder(subFolder, new Date(timeInMilliSeconds), Integer.parseInt(folderId))) {
-                    response.sendRedirect(getServletContext().getContextPath() + "/");
+                    response.sendRedirect(getServletContext().getContextPath() + "/home");
                 } else {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data are not correct");
                 }

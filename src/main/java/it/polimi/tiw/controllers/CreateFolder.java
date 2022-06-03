@@ -81,7 +81,7 @@ public class CreateFolder extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String name = req.getParameter("folder");
-        if (name == null || name.isEmpty() || !FolderDAO.isNameValid(name)) {
+        if (name == null || name.isEmpty() || !FolderDAO.checkName(name)) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Name is not valid");
             return;
         }
@@ -93,7 +93,7 @@ public class CreateFolder extends HttpServlet {
             }
             else {
                 if (folderDAO.createFolder(name, user.id()))
-                    resp.sendRedirect(getServletContext().getContextPath() + "/");
+                    resp.sendRedirect(getServletContext().getContextPath() + "/home");
                 else
                     resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while creating folder");
             }

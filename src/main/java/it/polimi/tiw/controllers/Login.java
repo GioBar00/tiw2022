@@ -109,7 +109,7 @@ public class Login extends HttpServlet {
             path = getServletContext().getContextPath() + "/login?error=true";
         else {
             req.getSession().setAttribute("user", user);
-            path = getServletContext().getContextPath() + "/";
+            path = getServletContext().getContextPath() + "/home";
         }
         resp.sendRedirect(path);
     }
