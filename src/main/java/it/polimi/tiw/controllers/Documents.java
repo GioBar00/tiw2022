@@ -64,7 +64,7 @@ public class Documents extends HttpServlet {
             String subId = request.getParameter("subFolder");
 
             if (subId == null || subId.isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data are not correct");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data is not correct");
                 return;
             }
 

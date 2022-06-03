@@ -7,7 +7,7 @@ public enum TemplateResolverParameters {
     /**
      * The prefix of the path to the template.
      */
-    PREFIX("/WEB-INF/pages/"),
+    PREFIX("/WEB-INF/"),
     /**
      * The suffix of the template.
      */

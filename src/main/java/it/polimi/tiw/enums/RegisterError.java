@@ -4,11 +4,7 @@ package it.polimi.tiw.enums;
  * Enum of the errors of the register page.
  */
 public enum RegisterError {
-    INVALID_USERNAME,
     INVALID_EMAIL,
-    INVALID_PASSWORD,
-    INVALID_NAME,
-    INVALID_SURNAME,
     USERNAME_NOT_AVAILABLE,
     EMAIL_ALREADY_USED,
     PASSWORD_MISMATCH;

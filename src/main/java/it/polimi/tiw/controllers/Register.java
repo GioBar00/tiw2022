@@ -65,13 +65,11 @@ public class Register extends HttpServlet {
         if (req.getParameter("error") != null) {
             String errorCode = req.getParameter("error");
             try {
-                RegisterError error = RegisterError.fromOrdinal(Integer.parseInt(errorCode));
-                if (error == null) {
-                    resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid error code");
-                    return;
-                }
-                webContext.setVariable("error", true);
-            } catch (NumberFormatException e) {
+                int error = Integer.parseInt(errorCode);
+                if (error < 0 || error >= RegisterError.values().length)
+                    throw new Exception();
+                webContext.setVariable("error", Integer.parseInt(errorCode));
+            } catch (Exception e) {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid error code");
                 return;
             }
@@ -113,18 +111,16 @@ public class Register extends HttpServlet {
         UserDAO userDAO = new UserDAO(connection);
         try {
 
+            if (!UserDAO.isValidUsername(username) || !UserDAO.isValidName(name) || !UserDAO.isValidSurname(surname) ||
+                    !UserDAO.isValidPassword(password)) {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid parameters");
+                return;
+            }
+
             RegisterError error;
 
-            if (!UserDAO.isValidUsername(username))
-                error = RegisterError.INVALID_USERNAME;
-            else if (!UserDAO.isValidEmail(email))
+            if (!UserDAO.isValidEmail(email))
                 error = RegisterError.INVALID_EMAIL;
-            else if (!UserDAO.isValidPassword(password))
-                error = RegisterError.INVALID_PASSWORD;
-            else if (!UserDAO.isValidName(name))
-                error = RegisterError.INVALID_NAME;
-            else if (!UserDAO.isValidSurname(surname))
-                error = RegisterError.INVALID_SURNAME;
             else if (userDAO.doesUsernameExist(username))
                 error = RegisterError.USERNAME_NOT_AVAILABLE;
             else if (userDAO.doesEmailExist(email))

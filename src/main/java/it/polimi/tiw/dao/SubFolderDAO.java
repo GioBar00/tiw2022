@@ -92,7 +92,7 @@ public class SubFolderDAO {
                         resultSet.getString("name"),
                         resultSet.getString("format"),
                         resultSet.getString("summary"),
-                        resultSet.getDate("creation_date"),
+                        resultSet.getDate("creationDate"),
                         subFolderId);
                 documents.add(document);
             }

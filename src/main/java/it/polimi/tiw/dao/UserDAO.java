@@ -164,8 +164,7 @@ public class UserDAO {
      * @return true if the password is valid, false otherwise.
      */
     public static boolean isValidPassword(String password) {
-        //return password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&.])[A-Za-z\\d@$!%*#?&.]{8,}$" && password.length() <= 50;
-        return true;
+        return password.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d@$!%*#?&.]{8,}$") && password.length() <= 50;
     }
 
     /**

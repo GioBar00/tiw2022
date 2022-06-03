@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-        th:replace="main.html :: layout(~{::title}, ~{}, ~{}, 'Home Page', ~{::body})" lang="en">
+      th:with="lastPage = @{/documents(subFolder=${session.lastPage})}"
+        th:replace="fragments/main.html :: layout('Home Page', ${move} ? ${lastPage} : ~{}, ${session.user.username()}, ~{::body})" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>HomePage</title>
@@ -9,9 +10,12 @@
 
 <div th:switch="${move}">
     <div th:case="false">
+        <a th:href="@{/content-management}">Edit</a>
+        <p>Folders:</p>
+        <p th:if="${folders.isEmpty()}">Empty</p>
         <ul>
             <li th:each="folder : ${folders}" th:class="Folder">
-                <div th:text="'Folder  ->' + ${folder.key.name}"></div>
+                <div th:text="${folder.key.name}"></div>
                 <ul>
                     <li th:each="subFolder : ${folder.value}">
                         <a th:text="${subFolder.name}" th:href="@{/documents(subFolder=${subFolder.id})}"></a>
@@ -19,13 +23,10 @@
                 </ul>
             </li>
         </ul>
-
-        <a href="content-management"> Go to Gestione Contenuti</a>
-        <a href="logout"> Logout</a>
     </div>
 
     <div th:case="true">
-        <h3 th:text="'Stai spostando il documento : ' + ${document.name} + ' dalla sottocartella : ' + ${fromSubFolder} + '. Scegli la sottocartella di destinazione'"></h3>
+        <h3 th:text="'You are moving the document ' + ${document.name} + ' from the subfolder : ' + ${fromSubFolder} + '. Choose a destination subfolder.'"></h3>
         <ul>
             <li th:each="folder : ${folders}">
                 <div th:text="${folder.key.name}"></div>
@@ -33,18 +34,16 @@
                     <li th:each="subFolder : ${folder.value}">
                         <p th:style="${subFolder.id == fromSubFolder ? 'color: red;' : 'color: black;'}"
                            th:text="${subFolder.name}"></p>
-                        <form th:if="${subFolder.id != fromSubFolder}" action="#" method="post">
+                        <form th:if="${subFolder.id != fromSubFolder}" action="#" method="POST">
                             <button type="submit" name="selectedSubFolder" value="" th:value="${subFolder.id}">Select
                                 SubFolder
                             </button>
                             <input type="hidden" id="documentId" name="documentId" value="" th:value="${document.id}">
                         </form>
-
                     </li>
                 </ul>
             </li>
         </ul>
-        <a th:text="'Undo'" th:href="@{/documents(subFolder=${session.lastPage})}"></a>
     </div>
 </div>
 

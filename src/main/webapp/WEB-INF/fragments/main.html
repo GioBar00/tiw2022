@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:fragment="layout (title, lastPage, username, content)">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Document Manager</title>
+    <link type="text/css" rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body>
+<div class="header">
+    <a th:unless="${#strings.isEmpty(lastPage)}" th:href="@{${lastPage}}" class="back">back</a>
+    <div th:unless="${#strings.isEmpty(username)}" class="header-right">
+        <div th:text="${username}" class="user">Unknown</div>
+        <a th:href="@{/logout}" class="logout">logout</a>
+    </div>
+    <h2 th:text="${title}" class="title">Document Manager Page</h2>
+</div>
+<div th:replace="${content}">
+    <p>Content to be replaced.</p>
+</div>
+</body>
+</html>

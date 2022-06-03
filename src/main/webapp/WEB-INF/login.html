@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      th:replace="/fragments/main.html :: layout ('Login', ~{}, '', ~{::body})">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+</head>
+<body>
+    <p th:unless="${error == null}" th:text="${error == true} ? 'Wrong username or password' : ''" style="color: red"></p>
+    <p th:unless="${success == null}" th:text="${success == true} ? 'Account created successfully' : ''"></p>
+    <form action="#" method="POST">
+        <label for="identifier"> Username or email:</label><br>
+        <input type="text" id="identifier" name="identifier" required><br>
+        <label for="password">Password: </label><br>
+        <input type="password" id="password" name="password" required><br>
+
+        <input type="Submit" value="Submit">
+    </form>
+    <a th:href="@{/register}">Create a new account</a>
+</body>
+</html>
