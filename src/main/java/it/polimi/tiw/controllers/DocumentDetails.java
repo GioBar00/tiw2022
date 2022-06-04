@@ -60,12 +60,11 @@ public class DocumentDetails extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        //TODO: handle last page
         try {
             String documentId = request.getParameter("documentId");
 
             if (documentId == null || documentId.isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data are not correct");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data is not correct");
                 return;
             }
             if (!InputValidator.isInt(documentId, response))

@@ -76,7 +76,7 @@ public class FolderDAO {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return new Folder(resultSet.getInt("idfolder"), resultSet.getString("name"),
-                        resultSet.getDate("creationDate"), resultSet.getInt("ownerId"));
+                        resultSet.getDate("creationDate"), resultSet.getInt("user_iduser"));
             }
         }
         return null;
@@ -90,7 +90,7 @@ public class FolderDAO {
      * @throws SQLException if an error occurs during the query.
      */
     public Map<Folder, List<SubFolder>> getFoldersWithSubFolders(int ownerId) throws SQLException {
-        String query = "SELECT * FROM folder f WHERE f.user_iduser = ?";
+        String query = "SELECT * FROM folder f INNER JOIN subfolder s on f.idfolder = s.folder_idfolder WHERE f.user_iduser = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, ownerId);
             ResultSet resultSet = statement.executeQuery();
@@ -106,21 +106,10 @@ public class FolderDAO {
                             resultSet.getDate("f.creationDate"), resultSet.getInt("user_iduser"));
                     folders.put(folder, new LinkedList<>());
                 }
-            }
-            if (folders.size() > 0) {
-                for (Folder f : folders.keySet()) {
-                    String queryS = "SELECT * FROM folder f  INNER JOIN subfolder s ON f.idfolder = s.folder_idfolder WHERE f.idfolder = ?";
-                    try (PreparedStatement statementS = connection.prepareStatement(queryS)) {
-                        statementS.setInt(1, f.id());
-                        ResultSet resultSetS = statementS.executeQuery();
-                        while (resultSetS.next()) {
-                            List<SubFolder> subFolders = folders.get(f);
-                            subFolders.add(new SubFolder(resultSetS.getInt("idsubfolder"),
-                                    resultSetS.getString("s.name"), resultSetS.getDate("s.creationDate"),
-                                    resultSetS.getInt("s.folder_idfolder")));
-                        }
-                    }
-                }
+                SubFolder subFolder = new SubFolder(resultSet.getInt("idsubfolder"), resultSet.getString("s.name"),
+                        resultSet.getDate("creationDate"),
+                        resultSet.getInt("folder_idfolder"));
+                folders.get(folder).add(subFolder);
             }
             return folders;
         }
@@ -151,7 +140,7 @@ public class FolderDAO {
      * @return if the name is valid.
      */
     public static boolean checkName(String name) {
-        return name != null && name.matches("^([\\w()\\[\\]\\-.]+\\.?)*[\\w()\\[\\]\\-]+$") && name.length() > 0 &&
+        return name != null && name.length() > 0 &&
                 name.length() <= 50;
     }
 }

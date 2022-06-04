@@ -1,77 +1,68 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+        th:replace="fragments/main.html :: layout ('Content Management', ${userRequest == null} ? '/home' : '/content-management', ${session.user.username()}, ~{::body})">
 <head>
     <meta charset="UTF-8">
     <title>ContentManagement</title>
 </head>
 <body>
-    <div th:switch ="${userRequest}">
-
-        <div th:case = "0">
-            <form action="#" th:action="@{/create-folder}" method="POST">
-            <label for="folder">Folder name :</label>
-            <input type="text" id="folder" name="folder"><br><br>
-            <input type="submit" value="Create a Folder">
-            </form>
-
+    <div class="container">
+        <div th:if="${userRequest == null}">
+            <h3>Manage your documents.</h3>
+            <a th:href="@{/create-folder}">Create folder</a>
             <ul>
                 <li th:each = "folder : ${folders}" >
-                    <p>
-                        <a th:utext = "${folder.key.name}"></a>
-                        <div>
-                            <form action="#" th:action="@{/create-subfolder}"  method="GET">
-                                <input type="hidden" id="FolderId" name="FolderId" value="" th:value = "${folder.key.id}">
-                                <input type="submit" value="Create a SubFolder"/>
-                            </form>
-                        </div>
-                    </p>
-
-
+                    <div th:text = "${folder.key.name}"></div>
+                    <a th:href = "@{/create-subfolder(folderId=${folder.key.id})}">Create subfolder</a>
                     <ul>
                         <li th:each = "subFolder : ${folder.value}">
-                            <p>
-                                <a th:utext = "${subFolder.name}"></a>
-                                <div>
-                                    <form action="#" th:action="@{/create-document}"  method="GET">
-                                        <input type="hidden" id="subFolderId" name="subFolderId" value="" th:value = "${subFolder.id}">
-                                        <input type="submit" value="Create a Document"/>
-                                    </form>
-                                </div>
-                            </p>
+                            <div th:text = "${subFolder.name}"></div>
+                            <a th:href = "@{/create-document(subFolderId=${subFolder.id})}">Create Document</a>
                         </li>
                     </ul>
                 </li>
             </ul>
         </div>
+        <div th:unless="${userRequest == null}" th:switch ="${userRequest}" class="centered">
 
+            <div th:case = "0">
+                <h3>Create a folder</h3>
+                <form action="#" th:action="@{/create-folder}" method="POST">
+                <label for="folder">Folder name :</label>
+                <input type="text" id="folder" name="folder" maxlength="50" required><br><br>
+                <input type="submit" value="Create folder">
+                </form>
+                <p th:unless="${error == null}" th:text="${error == true} ? 'Folder with same name already exists. Please choose a different name.' : 'Other'" style="color: red"></p>
+            </div>
 
-        <div th:case = "1">
-            <form action="#" th:action="@{/create-subfolder}" method = "POST">
-                <label for="subFolder">SubFolder name:</label>
-                <input type="text" id="subFolder" name="subFolder"><br><br>
-                <input type="hidden" id="fldrId" name="fldrId" value="" th:value = "${FldrId}">
-                <input type="submit" value="Create sub Folder">
-            </form>
+            <div th:case = "1">
+                <h3 th:text="'Creating a new subfolder inside the folder ' + ${folder.name()}"></h3>
+                <p th:unless="${error == null}" th:text="${error == true} ? 'Subfolder with same name already exists inside this folder. Please choose a different name.' : ''" style="color: red"></p>
+
+                <form action="#" th:action="@{/create-subfolder}" method = "POST">
+                    <label for="subFolder">SubFolder name:</label>
+                    <input type="text" id="subFolder" name="subFolder" maxlength="50" required><br><br>
+                    <input type="hidden" id="folderId" name="folderId" value="" th:value = "${folder.id()}">
+                    <input type="submit" value="Create subfolder">
+                </form>
+            </div>
+
+            <div th:case = "2">
+                <h3 th:text="'Creating a new document inside the subfolder ' + ${subFolder.name()}"></h3>
+                <p th:unless="${error == null}" th:text="${error == true} ? 'Document with same name and format already exists inside this subfolder. Please choose a different name or format.' : ''" style="color: red"></p>
+                <form action="#" th:action="@{/create-document}" method = "POST">
+                    <label for="name">Document name:</label>
+                    <input type="text" id="name" name="name" maxlength="50" required><br><br>
+                    <label for="format">Format :</label>
+                    <input type="text" id="format" name="format" maxlength="10" required><br><br>
+                    <label for="summary">Summary :</label>
+                    <textarea id="summary" name="summary" rows="5" maxlength="200" required></textarea><br><br>
+                    <input type="hidden" id="subFolderId" name="subFolderId" value="" th:value = "${subFolder.id()}">
+                    <input type="submit" value="Create document">
+                </form>
+            </div>
         </div>
-
-        <div th:case = "2">
-            <form action="#" th:action="@{/create-document}" method = "POST">
-                <label for="name">Document name:</label>
-                <input type="text" id="name" name="name"><br><br>
-                <label for="format">Format :</label>
-                <input type="text" id="format" name="format"><br><br>
-                <label for="summary">Summary :</label>
-                <input type="text" id="summary" name="summary"><br><br>
-                <input type="hidden" id="subFldrId" name="subFldrId" value="" th:value = "${subFolderId}">
-                <input type="submit" value="Crate Document">
-            </form>
-        </div>
-
     </div>
-
-    <a href="home">Go to Home page</a>
-
 </body>
 </html>
 

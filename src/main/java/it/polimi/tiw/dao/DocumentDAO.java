@@ -29,7 +29,7 @@ public class DocumentDAO {
      *
      * @return true the name could be valid, false otherwise
      */
-    public boolean checkName(String name) {
+    public static boolean checkName(String name) {
         return (name != null && name.length() > 0 && name.length() <= 50);
     }
 
@@ -38,7 +38,7 @@ public class DocumentDAO {
      *
      * @return true the format is valid, false otherwise
      */
-    public boolean checkFormat(String format) {
+    public static boolean checkFormat(String format) {
         return (format != null && format.length() > 0 && format.length() <= 10);
     }
 
@@ -47,7 +47,7 @@ public class DocumentDAO {
      *
      * @return true the summary is valid, false otherwise
      */
-    public boolean checkSummary(String summary) {
+    public static boolean checkSummary(String summary) {
         return (summary != null && summary.length() > 0 && summary.length() <= 200);
     }
 
@@ -56,11 +56,12 @@ public class DocumentDAO {
      *
      * @return true if the document already exists, false otherwise
      */
-    public boolean doesDocumentExists(int subFolderId, String name) throws SQLException {
-        String query = "SELECT * FROM document WHERE subfolder_idsubfolder = ? AND name = ?";
+    public boolean doesDocumentExists(int subFolderId, String name, String format) throws SQLException {
+        String query = "SELECT * FROM document WHERE subfolder_idsubfolder = ? AND name = ? AND format = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, subFolderId);
             statement.setString(2, name);
+            statement.setString(3, format);
             ResultSet resultSet = statement.executeQuery();
             return resultSet.next();
         }

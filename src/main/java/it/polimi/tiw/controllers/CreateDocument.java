@@ -1,6 +1,7 @@
 package it.polimi.tiw.controllers;
 
 import it.polimi.tiw.beans.Document;
+import it.polimi.tiw.beans.SubFolder;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.DocumentDAO;
 import it.polimi.tiw.dao.SubFolderDAO;
@@ -61,8 +62,8 @@ public class CreateDocument extends HttpServlet {
         try {
             String subId = request.getParameter("subFolderId");
 
-            if(subId == null || subId.isEmpty() || !InputValidator.isInt(subId, response)){
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data are not correct");
+            if (subId == null || subId.isEmpty() || !InputValidator.isInt(subId, response)) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data is not correct");
                 return;
             }
 
@@ -71,11 +72,13 @@ public class CreateDocument extends HttpServlet {
             User user = (User) request.getSession().getAttribute("user");
 
             if (subFolderDAO.checkOwner(user.id(), subFolderId)) {
-
+                SubFolder subFolder = subFolderDAO.getSubFolder(subFolderId);
                 ServletContext servletContext = getServletContext();
                 final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+                if (request.getParameter("error") != null)
+                    ctx.setVariable("error", true);
                 ctx.setVariable("userRequest", 2);
-                ctx.setVariable("subFolderId", subFolderId);
+                ctx.setVariable("subFolder", subFolder);
                 templateEngine.process(TemplatePages.CONTENT_MANAGEMENT.getValue(), ctx, response.getWriter());
 
             } else response.sendRedirect(getServletContext().getContextPath() + "/home");
@@ -102,35 +105,31 @@ public class CreateDocument extends HttpServlet {
         String name = request.getParameter("name");
         String format = request.getParameter("format");
         String summary = request.getParameter("summary");
-        String subFolderId = request.getParameter("subFldrId");
+        String subFolderId = request.getParameter("subFolderId");
 
-        if(name == null || name.isEmpty())
-            if(format == null || format.isEmpty())
-                if(summary == null || summary.isEmpty())
-                    if(subFolderId == null || subFolderId.isEmpty()){
-                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data are not correct");
+        if (name == null || name.isEmpty() || format == null || format.isEmpty() || summary == null || summary.isEmpty()
+                || subFolderId == null || subFolderId.isEmpty() || !DocumentDAO.checkName(name) || !DocumentDAO.checkFormat(format)
+                || !DocumentDAO.checkSummary(summary)) {
+                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data is not correct");
                         return;
                     }
 
         if (!InputValidator.isInt(subFolderId, response))
             return;
-
+        int subFolderIdInt = Integer.parseInt(subFolderId);
         SubFolderDAO subFolderDAO = new SubFolderDAO(this.connection);
         DocumentDAO documentDAO = new DocumentDAO(this.connection);
         User user = (User) request.getSession().getAttribute("user");
 
         try {
-            if (subFolderDAO.checkOwner(user.id(), Integer.parseInt(subFolderId)))
-                if (subFolderDAO.checkName(name))
-                    if (documentDAO.checkName(name) && documentDAO.checkFormat(format) && documentDAO.checkSummary(summary)) {
-
-                        if (documentDAO.createDocument(name, format, summary, Integer.parseInt(subFolderId))) {
-                            response.sendRedirect(getServletContext().getContextPath() + "/home");
-                            return;
-                        }
-
-                    }
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data are not correct");
+            if (subFolderDAO.checkOwner(user.id(), subFolderIdInt)) {
+                if (documentDAO.doesDocumentExists(subFolderIdInt, name, format)) {
+                    response.sendRedirect(getServletContext().getContextPath() + "/create-document?subFolderId=" + subFolderId + "&error=true");
+                    return;
+                }
+                if (documentDAO.createDocument(name, format, summary, subFolderIdInt))
+                    response.sendRedirect(getServletContext().getContextPath() + "/home");
+            } else response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data is not correct");
         } catch (SQLException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while processing the request");
         }

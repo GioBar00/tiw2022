@@ -1,17 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      th:replace="fragments/main.html :: layout ('Document details', '/documents?subFolder=' + ${document.subFolderId()}, ${session.user.username()}, ~{::body})">
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
 </head>
 <body>
-    <p th:text = "${document.name}"></p>
-    <p th:text ="'Owner :' + ${document.owner}"></p>
-    <p th:text ="'Format :' +  ${document.format}"></p>
-    <p>Summary</p>
+    <div class="container">
+        <h3 th:text="'Document ' + ${document.name} + ':'">Document</h3>
+        <b>Format: </b><div th:text="${document.format}" style="display: inline"></div>
+        <p style="font-weight: bold">Summary:</p>
         <p th:text = "${document.summary}"></p>
-    <p th:text ="'Date :' +  ${document.creationDate()}"></p>
-    <a th:text="'Go to last page'" th:href = "@{/documents(subFolder=${session.lastPage})}"></a>
+        <b>Date: </b><div th:text="${document.creationDate()}" style="display: inline"></div>
+    </div>
 </body>
 </html>
 

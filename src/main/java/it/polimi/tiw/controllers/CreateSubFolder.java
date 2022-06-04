@@ -1,6 +1,6 @@
 package it.polimi.tiw.controllers;
 
-import it.polimi.tiw.beans.Document;
+import it.polimi.tiw.beans.Folder;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.FolderDAO;
 import it.polimi.tiw.dao.SubFolderDAO;
@@ -61,14 +61,14 @@ public class CreateSubFolder extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-            String id = request.getParameter("FolderId");
+            String id = request.getParameter("folderId");
 
-            if(id == null || id.isEmpty()){
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data are not correct");
+            if (id == null || id.isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data is not correct");
                 return;
             }
 
-            if (!InputValidator.isInt(id, response)){
+            if (!InputValidator.isInt(id, response)) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Parameters");
                 return;
             }
@@ -78,10 +78,13 @@ public class CreateSubFolder extends HttpServlet {
             User user = (User) request.getSession().getAttribute("user");
 
             if (folderDAO.doesFolderExist(folderId, user.id())) {
+                Folder folder = folderDAO.getFolder(folderId);
                 ServletContext servletContext = getServletContext();
                 final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+                if (request.getParameter("error") != null)
+                    ctx.setVariable("error", true);
                 ctx.setVariable("userRequest", 1);
-                ctx.setVariable("FldrId", folderId);
+                ctx.setVariable("folder", folder);
                 templateEngine.process(TemplatePages.CONTENT_MANAGEMENT.getValue(), ctx, response.getWriter());
             } else response.sendRedirect(getServletContext().getContextPath() + "/home");
         } catch (NullPointerException | NumberFormatException e) {
@@ -104,13 +107,14 @@ public class CreateSubFolder extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String folderId = request.getParameter("fldrId");
+        String folderId = request.getParameter("folderId");
         String subFolder = request.getParameter("subFolder");
 
-        if(folderId == null || folderId.isEmpty() || subFolder ==null || subFolder.isEmpty()){
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data are not correct");
+        if (folderId == null || folderId.isEmpty() || subFolder == null || subFolder.isEmpty() || !SubFolderDAO.checkName(subFolder.trim())) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data is not correct");
             return;
         }
+        subFolder = subFolder.trim();
 
         if (!InputValidator.isInt(folderId, response))
             return;
@@ -118,16 +122,16 @@ public class CreateSubFolder extends HttpServlet {
         FolderDAO folderDAO = new FolderDAO(this.connection);
         User user = (User) request.getSession().getAttribute("user");
         try {
+            SubFolderDAO subFolderDAO = new SubFolderDAO(this.connection);
             if (folderDAO.doesFolderExist(Integer.parseInt(folderId), user.id())) {
-                SubFolderDAO subFolderDAO = new SubFolderDAO(this.connection);
-                java.util.Date date = new java.util.Date();
-                long timeInMilliSeconds = date.getTime();
-                if (subFolderDAO.createSubFolder(subFolder, new Date(timeInMilliSeconds), Integer.parseInt(folderId))) {
-                    response.sendRedirect(getServletContext().getContextPath() + "/home");
-                } else {
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data are not correct");
+                if (subFolderDAO.doesSubFolderExist(Integer.parseInt(folderId), subFolder)) {
+                    response.sendRedirect(getServletContext().getContextPath() + "/create-subfolder?folderId=" + folderId + "&error=true");
+                    return;
                 }
-            }
+                if (subFolderDAO.createSubFolder(subFolder, new Date(new java.util.Date().getTime()), Integer.parseInt(folderId))) {
+                    response.sendRedirect(getServletContext().getContextPath() + "/home");
+                } else response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while processing the request");
+            } else response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data is not correct");
         } catch (SQLException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while processing the request");
         }

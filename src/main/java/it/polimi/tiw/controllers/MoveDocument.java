@@ -69,7 +69,7 @@ public class MoveDocument extends HttpServlet {
         String docId = request.getParameter("documentId");
 
         if (docId == null || docId.isEmpty()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data are not correct");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data is not correct");
             return;
         }
         if (!InputValidator.isInt(docId, response))
@@ -84,7 +84,7 @@ public class MoveDocument extends HttpServlet {
             if (document != null) {
                 int fromSubFolder = document.subFolderId();
                 if (subFolderDAO.checkOwner(user.id(), fromSubFolder)) {
-
+                    SubFolder subFolder = subFolderDAO.getSubFolder(fromSubFolder);
                     FolderDAO folderDAO = new FolderDAO(this.connection);
                     Map<Folder, List<SubFolder>> folders = folderDAO.getFoldersWithSubFolders(user.id());
 
@@ -92,7 +92,7 @@ public class MoveDocument extends HttpServlet {
                     final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
                     ctx.setVariable("move", true);
                     ctx.setVariable("document", document);
-                    ctx.setVariable("fromSubFolder", fromSubFolder);
+                    ctx.setVariable("fromSubFolder", subFolder);
                     ctx.setVariable("folders", folders);
                     templateEngine.process(TemplatePages.HOME.getValue(), ctx, response.getWriter());
                     return;
@@ -121,7 +121,7 @@ public class MoveDocument extends HttpServlet {
         String documentId = request.getParameter("documentId");
 
         if (selectedSubFolder == null || documentId == null || selectedSubFolder.isEmpty() || documentId.isEmpty()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data are not correct");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data is not correct");
             return;
         }
 

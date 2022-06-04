@@ -60,7 +60,7 @@ public class CreateFolder extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         final WebContext ctx = new WebContext(req, resp, req.getServletContext(), req.getLocale());
-        if (req.getAttribute("error") != null)
+        if (req.getParameter("error") != null)
             ctx.setVariable("error", true);
         ctx.setVariable("userRequest", 0);
         templateEngine.process(TemplatePages.CONTENT_MANAGEMENT.getValue(), ctx, resp.getWriter());
@@ -81,10 +81,11 @@ public class CreateFolder extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String name = req.getParameter("folder");
-        if (name == null || name.isEmpty() || !FolderDAO.checkName(name)) {
+        if (name == null || name.isEmpty() || !FolderDAO.checkName(name.trim())) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Name is not valid");
             return;
         }
+        name = name.trim();
         User user = (User) req.getSession().getAttribute("user");
         try {
             FolderDAO folderDAO = new FolderDAO(connection);

@@ -60,7 +60,6 @@ public class ContentManagement extends HttpServlet {
             FolderDAO folderDAO = new FolderDAO(connection);
             final WebContext ctx = new WebContext(req, resp, req.getServletContext(), req.getLocale());
             User user = (User) req.getSession().getAttribute("user");
-            ctx.setVariable("userRequest", 0);
             ctx.setVariable("folders", folderDAO.getFoldersWithSubFolders(user.id()));
             templateEngine.process(TemplatePages.CONTENT_MANAGEMENT.getValue(), ctx, resp.getWriter());
         } catch (SQLException e) {

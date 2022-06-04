@@ -1,6 +1,7 @@
 package it.polimi.tiw.controllers;
 
 import it.polimi.tiw.beans.Document;
+import it.polimi.tiw.beans.SubFolder;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.SubFolderDAO;
 import it.polimi.tiw.enums.TemplatePages;
@@ -72,18 +73,15 @@ public class Documents extends HttpServlet {
                 return;
 
             int subFolderId = Integer.parseInt(subId);
-            List<Document> documents;
             SubFolderDAO subFolderDAO = new SubFolderDAO(this.connection);
             User user = (User) request.getSession().getAttribute("user");
-
-            if (subFolderDAO.checkOwner(user.id(), subFolderId)) {
-
-                documents = subFolderDAO.getDocuments(subFolderId);
-
-                request.getSession().setAttribute("lastPage", subId);
+            SubFolder subFolder = subFolderDAO.getSubFolder(subFolderId);
+            if (subFolderDAO.checkOwner(user.id(), subFolderId) && subFolder != null) {
+                List<Document> documents = subFolderDAO.getDocuments(subFolderId);
 
                 ServletContext servletContext = getServletContext();
                 final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+                ctx.setVariable("subFolder", subFolder);
                 ctx.setVariable("documents", documents);
                 templateEngine.process(TemplatePages.DOCUMENTS.getValue(), ctx, response.getWriter());
             } else response.sendRedirect(getServletContext().getContextPath() + "/home");
