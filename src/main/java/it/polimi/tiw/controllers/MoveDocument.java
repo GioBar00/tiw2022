@@ -140,8 +140,7 @@ public class MoveDocument extends HttpServlet {
                     int fromSubFolder = document.subFolderId();
                     if (subFolderDAO.checkOwner(user.id(), fromSubFolder)) {
                         if (documentDAO.moveDocument(document.id(), Integer.parseInt(selectedSubFolder))) {
-                            String path = getServletContext().getContextPath() + "/home";
-                            response.sendRedirect(path);
+                            response.sendRedirect(getServletContext().getContextPath() + "/documents?subFolder=" + selectedSubFolder);
                             return;
                         }
                     }

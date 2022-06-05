@@ -89,6 +89,7 @@ a, button {
     text-align: center;
     text-decoration: none;
     display: inline-block;
+    border-radius: 4px;
 }
 
 a:hover, a:active, button:hover {
