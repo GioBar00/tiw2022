@@ -111,11 +111,14 @@ public class Register extends HttpServlet {
         UserDAO userDAO = new UserDAO(connection);
         try {
 
-            if (!UserDAO.isValidUsername(username) || !UserDAO.isValidName(name) || !UserDAO.isValidSurname(surname) ||
+            if (!UserDAO.isValidUsername(username) || !UserDAO.isValidName(name.trim()) || !UserDAO.isValidSurname(surname.trim()) ||
                     !UserDAO.isValidPassword(password)) {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid parameters");
                 return;
             }
+
+            name = name.trim();
+            surname = surname.trim();
 
             RegisterError error;
 

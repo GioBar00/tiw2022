@@ -90,7 +90,7 @@ public class FolderDAO {
      * @throws SQLException if an error occurs during the query.
      */
     public Map<Folder, List<SubFolder>> getFoldersWithSubFolders(int ownerId) throws SQLException {
-        String query = "SELECT * FROM folder f INNER JOIN subfolder s on f.idfolder = s.folder_idfolder WHERE f.user_iduser = ?";
+        String query = "SELECT * FROM folder f LEFT JOIN subfolder s on f.idfolder = s.folder_idfolder WHERE f.user_iduser = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, ownerId);
             ResultSet resultSet = statement.executeQuery();
@@ -106,10 +106,12 @@ public class FolderDAO {
                             resultSet.getDate("f.creationDate"), resultSet.getInt("user_iduser"));
                     folders.put(folder, new LinkedList<>());
                 }
-                SubFolder subFolder = new SubFolder(resultSet.getInt("idsubfolder"), resultSet.getString("s.name"),
-                        resultSet.getDate("creationDate"),
-                        resultSet.getInt("folder_idfolder"));
-                folders.get(folder).add(subFolder);
+                if (resultSet.getString("s.name") != null) {
+                    SubFolder subFolder = new SubFolder(resultSet.getInt("idsubfolder"), resultSet.getString("s.name"),
+                            resultSet.getDate("s.creationDate"),
+                            resultSet.getInt("folder_idfolder"));
+                    folders.get(folder).add(subFolder);
+                }
             }
             return folders;
         }

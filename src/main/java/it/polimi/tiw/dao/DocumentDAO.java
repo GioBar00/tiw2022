@@ -112,50 +112,6 @@ public class DocumentDAO {
     }
 
     /**
-     * This method returns the owner of a document
-     *
-     * @param documentId the id of the document.
-     * @return the username of the owner
-     * @throws SQLException if an error occurs during the query
-     */
-    private String findOwner(int documentId) throws SQLException {
-        String query = "SELECT u.username FROM ((document d INNER JOIN subfolder s ON d.subfolder_idsubfolder = s.idsubfolder) INNER JOIN folder f ON s.folder_idfolder = f.idfolder) INNER JOIN user u ON f.user_iduser = u.iduser WHERE iddocument = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, documentId);
-            ResultSet resultSet = statement.executeQuery();
-
-            resultSet.next();
-            return resultSet.getString("username");
-
-        }
-
-    }
-
-    /**
-     * This method returns the {@link SubFolder} that contains the specified document.
-     *
-     * @param documentId the id of the document.
-     * @return {@link SubFolder}.
-     * @throws SQLException if an error occurs during the query.
-     */
-    public SubFolder getSubFolder(String documentId) throws SQLException {
-        String query = "SELECT * FROM  (subfolder s LEFT JOIN document d ON d.subfolder_idsubfolder = s.idsubfolder)WHERE iddocument = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, Integer.parseInt(documentId));
-            ResultSet resultSet = statement.executeQuery();
-
-            if (!resultSet.isBeforeFirst())
-                return null;
-            resultSet.next();
-            return new SubFolder(resultSet.getInt("idsubfolder"),
-                    resultSet.getString("name"),
-                    resultSet.getDate("creationDate"),
-                    resultSet.getInt("folder_idfolder"));
-        }
-    }
-
-
-    /**
      * This method moves a {@link Document} to a specified {@link SubFolder}.
      *
      * @param documentId  the id of the {@link Document}.

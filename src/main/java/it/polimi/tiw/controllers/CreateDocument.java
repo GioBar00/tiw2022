@@ -108,11 +108,14 @@ public class CreateDocument extends HttpServlet {
         String subFolderId = request.getParameter("subFolderId");
 
         if (name == null || name.isEmpty() || format == null || format.isEmpty() || summary == null || summary.isEmpty()
-                || subFolderId == null || subFolderId.isEmpty() || !DocumentDAO.checkName(name) || !DocumentDAO.checkFormat(format)
-                || !DocumentDAO.checkSummary(summary)) {
+                || subFolderId == null || subFolderId.isEmpty() || !DocumentDAO.checkName(name.trim()) || !DocumentDAO.checkFormat(format.trim())
+                || !DocumentDAO.checkSummary(summary.trim())) {
                         response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data is not correct");
                         return;
                     }
+        name = name.trim();
+        format = format.trim();
+        summary = summary.trim();
 
         if (!InputValidator.isInt(subFolderId, response))
             return;

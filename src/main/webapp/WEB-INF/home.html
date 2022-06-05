@@ -15,7 +15,7 @@
             <ul>
                 <li th:each="folder : ${folders}" th:class="Folder">
                     <div th:text="${folder.key.name}"></div>
-                    <ul>
+                    <ul th:unless="${folder.value.isEmpty()}">
                         <li th:each="subFolder : ${folder.value}">
                             <a th:text="${subFolder.name}" th:href="@{/documents(subFolder=${subFolder.id})}"></a>
                         </li>
@@ -29,7 +29,7 @@
             <ul>
                 <li th:each="folder : ${folders}">
                     <div th:text="${folder.key.name}"></div>
-                    <ul>
+                    <ul th:unless="${folder.value.isEmpty()}">
                         <li th:each="subFolder : ${folder.value}">
                             <p th:if="${subFolder.id == fromSubFolder.id()}" style="color: red"
                                th:text="${subFolder.name}"></p>

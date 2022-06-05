@@ -14,7 +14,7 @@
                 <li th:each = "folder : ${folders}" >
                     <div th:text = "${folder.key.name}"></div>
                     <a th:href = "@{/create-subfolder(folderId=${folder.key.id})}">Create subfolder</a>
-                    <ul>
+                    <ul th:unless="${folder.value.isEmpty()}">
                         <li th:each = "subFolder : ${folder.value}">
                             <div th:text = "${subFolder.name}"></div>
                             <a th:href = "@{/create-document(subFolderId=${subFolder.id})}">Create Document</a>
