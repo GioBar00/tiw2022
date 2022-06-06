@@ -6,13 +6,15 @@
     <title>Document</title>
 </head>
 <body>
-    <div class="container">
-        <h3 th:text="'Document ' + ${document.name} + ':'">Document</h3>
-        <b>Format: </b><div th:text="${document.format}" style="display: inline"></div>
-        <p style="font-weight: bold">Summary:</p>
-        <p th:text = "${document.summary}"></p>
-        <b>Date: </b><div th:text="${document.creationDate()}" style="display: inline"></div>
-    </div>
+<div class="container">
+    <h3 th:text="'Document ' + ${document.name} + ':'">Document</h3>
+    <b>Format: </b>
+    <div th:text="${document.format}" style="display: inline"></div>
+    <p style="font-weight: bold">Summary:</p>
+    <p th:text="${document.summary}"></p>
+    <b>Date: </b>
+    <div th:text="${document.creationDate()}" style="display: inline"></div>
+</div>
 </body>
 </html>
 

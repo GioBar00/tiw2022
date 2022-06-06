@@ -77,12 +77,10 @@ public class CreateSubFolder extends HttpServlet {
             FolderDAO folderDAO = new FolderDAO(this.connection);
             User user = (User) request.getSession().getAttribute("user");
 
-            if (folderDAO.doesFolderExist(folderId, user.id())) {
+            if (folderDAO.checkOwner(folderId, user.id())) {
                 Folder folder = folderDAO.getFolder(folderId);
                 ServletContext servletContext = getServletContext();
                 final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-                if (request.getParameter("error") != null)
-                    ctx.setVariable("error", true);
                 ctx.setVariable("userRequest", 1);
                 ctx.setVariable("folder", folder);
                 templateEngine.process(TemplatePages.CONTENT_MANAGEMENT.getValue(), ctx, response.getWriter());
@@ -123,14 +121,11 @@ public class CreateSubFolder extends HttpServlet {
         User user = (User) request.getSession().getAttribute("user");
         try {
             SubFolderDAO subFolderDAO = new SubFolderDAO(this.connection);
-            if (folderDAO.doesFolderExist(Integer.parseInt(folderId), user.id())) {
-                if (subFolderDAO.doesSubFolderExist(Integer.parseInt(folderId), subFolder)) {
-                    response.sendRedirect(getServletContext().getContextPath() + "/create-subfolder?folderId=" + folderId + "&error=true");
-                    return;
-                }
+            if (folderDAO.checkOwner(Integer.parseInt(folderId), user.id())) {
                 if (subFolderDAO.createSubFolder(subFolder, new Date(new java.util.Date().getTime()), Integer.parseInt(folderId))) {
                     response.sendRedirect(getServletContext().getContextPath() + "/home");
-                } else response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while processing the request");
+                } else
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while processing the request");
             } else response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data is not correct");
         } catch (SQLException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while processing the request");

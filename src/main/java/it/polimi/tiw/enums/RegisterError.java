@@ -11,6 +11,7 @@ public enum RegisterError {
 
     /**
      * Returns the {@link RegisterError} corresponding to the given ordinal or null if the ordinal is invalid.
+     *
      * @param ordinal the ordinal of the {@link RegisterError}
      * @return the {@link RegisterError} corresponding to the given ordinal or null if the ordinal is invalid.
      */

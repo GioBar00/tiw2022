@@ -75,8 +75,6 @@ public class CreateDocument extends HttpServlet {
                 SubFolder subFolder = subFolderDAO.getSubFolder(subFolderId);
                 ServletContext servletContext = getServletContext();
                 final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-                if (request.getParameter("error") != null)
-                    ctx.setVariable("error", true);
                 ctx.setVariable("userRequest", 2);
                 ctx.setVariable("subFolder", subFolder);
                 templateEngine.process(TemplatePages.CONTENT_MANAGEMENT.getValue(), ctx, response.getWriter());
@@ -110,9 +108,9 @@ public class CreateDocument extends HttpServlet {
         if (name == null || name.isEmpty() || format == null || format.isEmpty() || summary == null || summary.isEmpty()
                 || subFolderId == null || subFolderId.isEmpty() || !DocumentDAO.checkName(name.trim()) || !DocumentDAO.checkFormat(format.trim())
                 || !DocumentDAO.checkSummary(summary.trim())) {
-                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data is not correct");
-                        return;
-                    }
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data is not correct");
+            return;
+        }
         name = name.trim();
         format = format.trim();
         summary = summary.trim();
@@ -126,10 +124,6 @@ public class CreateDocument extends HttpServlet {
 
         try {
             if (subFolderDAO.checkOwner(user.id(), subFolderIdInt)) {
-                if (documentDAO.doesDocumentExists(subFolderIdInt, name, format)) {
-                    response.sendRedirect(getServletContext().getContextPath() + "/create-document?subFolderId=" + subFolderId + "&error=true");
-                    return;
-                }
                 if (documentDAO.createDocument(name, format, summary, subFolderIdInt))
                     response.sendRedirect(getServletContext().getContextPath() + "/home");
             } else response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The data is not correct");

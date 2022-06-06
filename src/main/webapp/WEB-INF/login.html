@@ -6,18 +6,20 @@
     <title>Login Page</title>
 </head>
 <body>
-    <div class="centered">
-        <p th:unless="${error == null}" th:text="${error == true} ? 'Wrong username or password' : ''" style="color: red"></p>
-        <p th:unless="${success == null}" th:text="${success == true} ? 'Account created successfully' : ''" style="color: green"></p>
-        <form action="#" method="POST">
-            <label for="identifier"> Username or email:</label><br>
-            <input type="text" id="identifier" name="identifier" required><br>
-            <label for="password">Password: </label><br>
-            <input type="password" id="password" name="password" required><br>
+<div class="centered">
+    <p th:unless="${error == null}" th:text="${error == true} ? 'Wrong username or password' : ''"
+       style="color: red"></p>
+    <p th:unless="${success == null}" th:text="${success == true} ? 'Account created successfully' : ''"
+       style="color: green"></p>
+    <form action="#" method="POST">
+        <label for="identifier"> Username or email:</label><br>
+        <input type="text" id="identifier" name="identifier" required><br>
+        <label for="password">Password: </label><br>
+        <input type="password" id="password" name="password" required><br>
 
-            <input type="Submit" value="Submit">
-        </form>
-        <a th:href="@{/register}" style="float: right">Create a new account</a>
-    </div>
+        <input type="Submit" value="Submit">
+    </form>
+    <a th:href="@{/register}" style="float: right">Create a new account</a>
+</div>
 </body>
 </html>

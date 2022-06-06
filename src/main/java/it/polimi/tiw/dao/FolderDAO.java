@@ -35,27 +35,10 @@ public class FolderDAO {
      * @return if the folder exists.
      * @throws SQLException if an error occurs during the query.
      */
-    public boolean doesFolderExist(int id, int ownerId) throws SQLException {
+    public boolean checkOwner(int id, int ownerId) throws SQLException {
         String query = "SELECT idfolder FROM folder WHERE idfolder = ? AND user_iduser = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
-            statement.setInt(2, ownerId);
-            ResultSet resultSet = statement.executeQuery();
-            return resultSet.next();
-        }
-    }
-
-    /**
-     * This method checks if a folder exists with the given name and owner.
-     *
-     * @param name the name of the folder.
-     * @return if the folder exists.
-     * @throws SQLException if an error occurs during the query.
-     */
-    public boolean doesFolderWithNameExist(String name, int ownerId) throws SQLException {
-        String query = "SELECT idfolder FROM folder WHERE name = ? AND user_iduser = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, name);
             statement.setInt(2, ownerId);
             ResultSet resultSet = statement.executeQuery();
             return resultSet.next();

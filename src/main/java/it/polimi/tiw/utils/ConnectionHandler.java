@@ -15,6 +15,7 @@ public abstract class ConnectionHandler {
 
     /**
      * This method returns the {@link Connection} to the database.
+     *
      * @param context the {@link ServletContext} of the {@link javax.servlet.Servlet}.
      * @return the {@link Connection} to the database.
      * @throws UnavailableException if the {@link Connection} to the database cannot be initialized.
@@ -36,6 +37,7 @@ public abstract class ConnectionHandler {
 
     /**
      * This method closes the {@link Connection} to the database.
+     *
      * @param connection the {@link Connection} to close.
      * @throws SQLException if an error occurs while closing the {@link Connection}.
      */

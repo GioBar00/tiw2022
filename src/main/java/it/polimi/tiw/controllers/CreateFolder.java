@@ -47,35 +47,31 @@ public class CreateFolder extends HttpServlet {
 
     /**
      * Loads the page to create a new folder.
-     * @param req   an {@link HttpServletRequest} object that
-     *                  contains the request the client has made
-     *                  of the servlet
      *
-     * @param resp  an {@link HttpServletResponse} object that
-     *                  contains the response the servlet sends
-     *                  to the client
-     *
+     * @param req  an {@link HttpServletRequest} object that
+     *             contains the request the client has made
+     *             of the servlet
+     * @param resp an {@link HttpServletResponse} object that
+     *             contains the response the servlet sends
+     *             to the client
      * @throws IOException if an input or output error occurs
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         final WebContext ctx = new WebContext(req, resp, req.getServletContext(), req.getLocale());
-        if (req.getParameter("error") != null)
-            ctx.setVariable("error", true);
         ctx.setVariable("userRequest", 0);
         templateEngine.process(TemplatePages.CONTENT_MANAGEMENT.getValue(), ctx, resp.getWriter());
     }
 
     /**
      * Creates a new folder.
-     * @param req   an {@link HttpServletRequest} object that
-     *                  contains the request the client has made
-     *                  of the servlet
      *
-     * @param resp  an {@link HttpServletResponse} object that
-     *                  contains the response the servlet sends
-     *                  to the client
-     *
+     * @param req  an {@link HttpServletRequest} object that
+     *             contains the request the client has made
+     *             of the servlet
+     * @param resp an {@link HttpServletResponse} object that
+     *             contains the response the servlet sends
+     *             to the client
      * @throws IOException if an input or output error occurs
      */
     @Override
@@ -89,15 +85,10 @@ public class CreateFolder extends HttpServlet {
         User user = (User) req.getSession().getAttribute("user");
         try {
             FolderDAO folderDAO = new FolderDAO(connection);
-            if (folderDAO.doesFolderWithNameExist(name, user.id())) {
-                resp.sendRedirect(getServletContext().getContextPath() + "/create-folder?error=true");
-            }
-            else {
-                if (folderDAO.createFolder(name, user.id()))
-                    resp.sendRedirect(getServletContext().getContextPath() + "/home");
-                else
-                    resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while creating folder");
-            }
+            if (folderDAO.createFolder(name, user.id()))
+                resp.sendRedirect(getServletContext().getContextPath() + "/home");
+            else
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while creating folder");
         } catch (SQLException e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while creating folder");
         }

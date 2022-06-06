@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-        th:replace="fragments/main.html :: layout('Home Page', ${move} ? '/documents?subFolder=' + ${fromSubFolder.id()} : ~{}, ${session.user.username()}, ~{::body})" lang="en">
+      th:replace="fragments/main.html :: layout('Home Page', ${move} ? '/documents?subFolder=' + ${fromSubFolder.id()} : ~{}, ${session.user.username()}, ~{::body})"
+      lang="en">
 <head>
     <meta charset="UTF-8">
     <title>HomePage</title>
@@ -33,10 +34,13 @@
                         <li th:each="subFolder : ${folder.value}">
                             <p th:if="${subFolder.id == fromSubFolder.id()}" style="color: red"
                                th:text="${subFolder.name}"></p>
-                            <form th:if="${subFolder.id != fromSubFolder.id()}" action="#" method="POST" class="move-form">
+                            <form th:if="${subFolder.id != fromSubFolder.id()}" action="#" method="POST"
+                                  class="move-form">
                                 <button type="submit" name="selectedSubFolder" value="" th:value="${subFolder.id}"
-                                        th:text="${subFolder.name}">Subfolder</button>
-                                <input type="hidden" id="documentId" name="documentId" value="" th:value="${document.id}">
+                                        th:text="${subFolder.name}">Subfolder
+                                </button>
+                                <input type="hidden" id="documentId" name="documentId" value=""
+                                       th:value="${document.id}">
                             </form>
                             <!--<a th:if="${subFolder.id != fromSubFolder.id()}" th:href="@{/move-document(documentId=${document.id}, selectedSubFolder=${subFolder.id})}"
                                th:text="${subFolder.name}">Move</a>-->

@@ -1,37 +1,43 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en"
-        th:replace="/fragments/main.html :: layout ('Register', '/login', '', ~{::body})">
+      th:replace="/fragments/main.html :: layout ('Register', '/login', '', ~{::body})">
 <head>
     <meta charset="UTF-8">
     <title>Register</title>
 </head>
 <body>
-    <div class="centered">
-        <div th:unless="${error == null}" th:switch="${error}" style="color: red">
-            <p th:case="0">Not valid email!</p>
-            <p th:case="1">Username already exists!</p>
-            <p th:case="2">Email already used!</p>
-            <p th:case="3">Passwords do not match!</p>
-        </div>
-        <form th:with="passPattern = '^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&.]{8,}$'" action="#" method="POST">
-            <label for="username"> Username:</label><br>
-            <input type="text" id="username" name="username" pattern="[a-zA-Z\d]{3,20}$" minlength="3" maxlength="20" required>
-            <p style="margin-top: 0">can only contain letters and numbers</p>
-            <label for="name">Name: </label><br>
-            <input type="text" id="name" name="name" pattern="[a-zA-Z\s'èéòàù]{3,20}$" minlength="3" maxlength="20" required><br>
-            <label for="surname">Surname: </label><br>
-            <input type="text" id="surname" name="surname" pattern="[a-zA-Z\s'èéòàù]{3,20}$" minlength="3" maxlength="20" required><br>
-            <label for="email"> Email:</label><br>
-            <input type="email" id="email" name="email" maxlength="50" required><br>
-            <label for="password">Password: </label><br>
-            <input type="password" id="password" name="password" th:pattern="${passPattern}" minlength="8" maxlength="50" required>
-            <p style="margin-top: 0">minimum 8 characters and must contain at least one letter and number. (valid special characters @$!%*#?&.)</p>
-            <label for="confirmPassword">Confirm password: </label><br>
-            <input type="password" id="confirmPassword" name="confirmPassword" th:pattern="${passPattern}" minlength="8" maxlength="50" required><br>
-
-
-            <input type="Submit" value="Submit">
-        </form>
+<div class="centered">
+    <div th:unless="${error == null}" th:switch="${error}" style="color: red">
+        <p th:case="0">Not valid email!</p>
+        <p th:case="1">Username already exists!</p>
+        <p th:case="2">Email already used!</p>
+        <p th:case="3">Passwords do not match!</p>
     </div>
+    <form th:with="passPattern = '^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&.]{8,}$'" action="#" method="POST">
+        <label for="username"> Username:</label><br>
+        <input type="text" id="username" name="username" pattern="[a-zA-Z\d]{3,20}$" minlength="3" maxlength="20"
+               required>
+        <p style="margin-top: 0">can only contain letters and numbers</p>
+        <label for="name">Name: </label><br>
+        <input type="text" id="name" name="name" pattern="[a-zA-Z\s'èéòàù]{3,20}$" minlength="3" maxlength="20"
+               required><br>
+        <label for="surname">Surname: </label><br>
+        <input type="text" id="surname" name="surname" pattern="[a-zA-Z\s'èéòàù]{3,20}$" minlength="3" maxlength="20"
+               required><br>
+        <label for="email"> Email:</label><br>
+        <input type="email" id="email" name="email" maxlength="50" required><br>
+        <label for="password">Password: </label><br>
+        <input type="password" id="password" name="password" th:pattern="${passPattern}" minlength="8" maxlength="50"
+               required>
+        <p style="margin-top: 0">minimum 8 characters and must contain at least one letter and number. (valid special
+            characters @$!%*#?&.)</p>
+        <label for="confirmPassword">Confirm password: </label><br>
+        <input type="password" id="confirmPassword" name="confirmPassword" th:pattern="${passPattern}" minlength="8"
+               maxlength="50" required><br>
+
+
+        <input type="Submit" value="Submit">
+    </form>
+</div>
 </body>
 </html>

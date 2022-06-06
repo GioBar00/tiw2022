@@ -14,6 +14,7 @@ public abstract class TemplateHandler {
 
     /**
      * Creates a {@link TemplateEngine}.
+     *
      * @param context the {@link ServletContext} of the {@link javax.servlet.Servlet}.
      * @return the {@link TemplateEngine}.
      */
