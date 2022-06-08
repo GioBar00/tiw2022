@@ -66,4 +66,15 @@ public class ContentManagement extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while retrieving folders");
         }
     }
+
+    /**
+     * Closes the {@link Connection} to the database
+     */
+    @Override
+    public void destroy() {
+        try {
+            ConnectionHandler.closeConnection(connection);
+        } catch (SQLException ignored) {
+        }
+    }
 }
