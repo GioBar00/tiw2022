@@ -28,16 +28,16 @@ DocumentDAO
 
 
 Controllers:
-Login               done
-Register            done
-Logout              done
+Login
+Register
+Logout
 HomePage
 MoveDocument
 CreateFolder
 CreateSubFolder
-CreateDocument      done
-Documents           done
-DocumentDetails     done
+CreateDocument
+Documents
+DocumentDetails
 GotoLastPage
 
 Views
