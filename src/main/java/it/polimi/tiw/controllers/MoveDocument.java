@@ -133,7 +133,7 @@ public class MoveDocument extends HttpServlet {
         User user = (User) request.getSession().getAttribute("user");
 
         try {
-            if (subFolderDAO.checkOwner(user.id(), Integer.parseInt(selectedSubFolder))) {
+            if (documentDAO.checkOwner(user.id(), Integer.parseInt(documentId))) {
                 Document document = documentDAO.getDocument(Integer.parseInt(documentId));
                 if (document != null) {
                     int fromSubFolder = document.subFolderId();
