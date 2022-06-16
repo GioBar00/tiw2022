@@ -133,16 +133,14 @@ public class MoveDocument extends HttpServlet {
         User user = (User) request.getSession().getAttribute("user");
 
         try {
-            if (documentDAO.checkOwner(user.id(), Integer.parseInt(documentId))) {
+            if (documentDAO.checkOwner(user.id(), Integer.parseInt(documentId)) && subFolderDAO.checkOwner(user.id(), Integer.parseInt(selectedSubFolder))) {
                 Document document = documentDAO.getDocument(Integer.parseInt(documentId));
                 if (document != null) {
-                    int fromSubFolder = document.subFolderId();
-                    if (subFolderDAO.checkOwner(user.id(), fromSubFolder)) {
-                        if (documentDAO.moveDocument(document.id(), Integer.parseInt(selectedSubFolder))) {
-                            response.sendRedirect(getServletContext().getContextPath() + "/documents?subFolder=" + selectedSubFolder);
-                            return;
-                        }
+                    if (documentDAO.moveDocument(document.id(), Integer.parseInt(selectedSubFolder))) {
+                        response.sendRedirect(getServletContext().getContextPath() + "/documents?subFolder=" + selectedSubFolder);
+                        return;
                     }
+
                 }
             }
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
